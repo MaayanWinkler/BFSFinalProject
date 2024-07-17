@@ -19,13 +19,12 @@
     </style>
 </head>
 <body>
-
     <div class="question-row">
       <input type="submit" onclick="location.href='/form'" value="Insert Data"></button>
       <input type="submit" onclick="location.href='/reports'" value="View Database"></button>
       <input type="submit" onclick="location.href='/filter'" value="Filter Data"></button>
     </div>
-    <div class="container">
+    <div class="page-inner">
         <h1>Insert to DB</h1>
         <form method="post" onsubmit="return validateForm()">
             <div class="question-row">
@@ -68,6 +67,37 @@
             <input type="submit" value="Submit" />
         </form>
     </div>
+</body>
+
+
+    <script src="{%  static 'js/script.js' %}"></script>
+    <script type="text/javascript" src="{%  static 'js/plugin/webfont/webfont.min.js' %}"></script>
+    <script src="{%  static 'js/plugin/webfont/webfont.min.js' %}"></script>
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{%  static 'css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{%  static 'css/plugins.min.css' %}" />
+    <link rel="stylesheet" href="{%  static '/css/kaiadmin.min.css' %}" />
+    <script src="{%  static 'js/core/jquery-3.7.1.min.js' %}"></script>
+    <script src="{%  static 'js/core/popper.min.js' %}"></script>
+    <script src="{%  static 'js/core/bootstrap.min.js' %}"></script>
+    <script>
+        WebFont.load({
+            google: { families: ["Public Sans:300,400,500,600,700"] },
+            custom: {
+                families: [
+                  "Font Awesome 5 Solid",
+                  "Font Awesome 5 Regular",
+                  "Font Awesome 5 Brands",
+                  "simple-line-icons",
+                ],
+                urls: ["static/css/fonts.min.css"],
+            },
+            active: function () {
+              sessionStorage.fonts = true;
+            },
+        });
+    </script>
+    
     
     <script>
         function validateForm() {
@@ -147,5 +177,4 @@
             }
         }
     </script>
-</body>
 </html>
