@@ -19,56 +19,60 @@
     </style>
 </head>
 <body>
-    <div class="question-row">
-      <input type="submit" onclick="location.href='/form'" value="Insert Data"></button>
-      <input type="submit" onclick="location.href='/reports'" value="View Database"></button>
-      <input type="submit" onclick="location.href='/filter'" value="Filter Data"></button>
-    </div>
-    <div class="page-inner">
-        <h1>Insert to DB</h1>
-        <form method="post" onsubmit="return validateForm()">
-            <div class="question-row">
-              <label for="cycle">Cycle</label>
-              <input type="text" id="cycle" name="cycle" required />
-              <span class="error-message" id="cycle-error"></span>
+    <div class="main-panel">
+        <div class="page-inner">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <!-- <div class="card-header"></div> -->
+                            <div class="card-title">Form12</div>
+                        <div class="card-body"> </div>
+                            <div class="form-group">
+                                <label for="cycle">Cycle</label>
+                                <input type="text" id="cycle" name="cycle" required />
+                                <span class="error-message" id="cycle-error"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="diet">Diet</label>
+                                <input type="text" id="diet" name="diet" required />
+                                <span class="error-message" id="diet-error"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="date">Date (YYYY-MM-DD)</label>
+                                <input type="text" id="date" name="date" required />
+                                <span class="error-message" id="date-error"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="temperature">Temperature</label>
+                                <input type="text" id="temperature" name="temperature" required />
+                                <span class="error-message" id="temperature-error"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="larvae_weight">10 Larvae Weight</label>
+                                <input type="text" id="larvae_weight" name="larvae_weight" required />
+                                <span class="error-message" id="larvae-weight-error"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="before_dry">Substrate Before Drying </label>
+                                <input type="text" id="before_dry" name="before_dry" required />
+                                <span class="error-message" id="before-dry-error"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="after_dry">Substrate After Drying</label>
+                                <input type="text" id="after_dry" name="after_dry" required />
+                                <span class="error-message" id="after-dry-error"></span>
+                            </div>
+                        <div class="card-action">
+                            <div class="success-message" id="success-message"></div>
+                            {% csrf_token %}
+                            <button class="btn btn-success" id="submit">Submit</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="question-row">
-              <label for="diet">Diet</label>
-              <input type="text" id="diet" name="diet" required />
-              <span class="error-message" id="diet-error"></span>
-            </div>
-            <div class="question-row">
-              <label for="date">Date (YYYY-MM-DD)</label>
-              <input type="text" id="date" name="date" required />
-              <span class="error-message" id="date-error"></span>
-            </div>
-            <div class="question-row">
-              <label for="temperature">Temperature</label>
-              <input type="text" id="temperature" name="temperature" required />
-              <span class="error-message" id="temperature-error"></span>
-            </div>
-            <div class="question-row">
-              <label for="larvae_weight">10 Larvae Weight</label>
-              <input type="text" id="larvae_weight" name="larvae_weight" required />
-              <span class="error-message" id="larvae-weight-error"></span>
-            </div>
-            <div class="question-row">
-              <label for="before_dry">Substrate Before Drying </label>
-              <input type="text" id="before_dry" name="before_dry" required />
-              <span class="error-message" id="before-dry-error"></span>
-            </div>
-            <div class="question-row">
-              <label for="after_dry">Substrate After Drying</label>
-              <input type="text" id="after_dry" name="after_dry" required />
-              <span class="error-message" id="after-dry-error"></span>
-            </div>
-            <div class="success-message" id="success-message"></div>
-            {% csrf_token %}
-            <input type="submit" value="Submit" />
-        </form>
+        </div>    
     </div>
 </body>
-
 
     <script src="{%  static 'js/script.js' %}"></script>
     <script type="text/javascript" src="{%  static 'js/plugin/webfont/webfont.min.js' %}"></script>
@@ -85,21 +89,22 @@
             google: { families: ["Public Sans:300,400,500,600,700"] },
             custom: {
                 families: [
-                  "Font Awesome 5 Solid",
-                  "Font Awesome 5 Regular",
-                  "Font Awesome 5 Brands",
-                  "simple-line-icons",
+                    "Font Awesome 5 Solid",
+                    "Font Awesome 5 Regular",
+                    "Font Awesome 5 Brands",
+                    "simple-line-icons",
                 ],
                 urls: ["static/css/fonts.min.css"],
             },
             active: function () {
-              sessionStorage.fonts = true;
+                sessionStorage.fonts = true;
             },
         });
     </script>
     
-    
     <script>
+        document.getElementById("submit").addEventListener("click", validateForm);
+
         function validateForm() {
             var cycleInput = document.getElementById("cycle");
             var dietInput = document.getElementById("diet");
@@ -150,7 +155,6 @@
             for (var i = 0; i < errorElements.length; i++) {
                 errorElements[i].textContent = "";
             }
-
 
             if (
                 validateCycle() &&
