@@ -78,8 +78,8 @@ const loadSidebar = function () {
                 <div class="collapse" id="tables">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="/reports">
-                        <span class="sub-item">Basic Table</span>
+                      <a href="/table1">
+                        <span class="sub-item">Basic Table2</span>
                       </a>
                     </li>
                     <li>

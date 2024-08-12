@@ -58,11 +58,11 @@ def fill_form(request):
 
     return render(request, "form.html",{})
 
-def get_reports(request):
+def get_table1(request):
     all_measurements = Measurement.objects.get_queryset()
-    return render(request, "reports.html",{})
+    return render(request, "table1.html",{})
 
-def get_reports(request):
+def get_table1(request):
     all_measurements = Measurement.objects.all()
     data = []
 
@@ -78,7 +78,7 @@ def get_reports(request):
         }
         data.append(row_dict)
 
-    return render(request, 'reports.html', {'data_from_server': data})
+    return render(request, 'table1.html', {'data_from_server': data})
 
 def filter_view(request):
     # Handle user input for filtering

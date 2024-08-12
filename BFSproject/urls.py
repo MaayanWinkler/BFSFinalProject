@@ -25,6 +25,6 @@ urlpatterns = [
     path("index", views.index, name="index"),
     path("check_user/", views.check_user, name="check_user"),
     path("form", views.fill_form, name="fill_form"),
-    path("reports", views.get_reports, name="get_reports"),
+    path("table1", views.get_table1, name="get_table1"),
     path('filter', views.filter_view, name='filter_view'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
