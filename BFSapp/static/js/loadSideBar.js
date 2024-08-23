@@ -52,8 +52,8 @@ const loadSidebar = function () {
                 <div class="collapse" id="forms">
                   <ul class="nav nav-collapse">
                     <li class="active">
-                      <a href="/form"> 
-                        <span class="sub-item">Basic Form</span>
+                      <a href="/eggsMonitorForm"> 
+                        <span class="sub-item">Eggs Monitoring</span>
                       </a>
                     </li>
                     <li>
@@ -79,7 +79,7 @@ const loadSidebar = function () {
                   <ul class="nav nav-collapse">
                     <li>
                       <a href="/table1">
-                        <span class="sub-item">Basic Table2</span>
+                        <span class="sub-item">Eggs Monitoring Table</span>
                       </a>
                     </li>
                     <li>

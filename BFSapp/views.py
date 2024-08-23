@@ -36,7 +36,9 @@ def check_user(request):
         else:
             return render(request, "login.html",{})
 
-def fill_form(request):    
+def fill_eggs_monitor_form(request):
+    print(request.POST)
+    print('sadf')
     if request.POST:
         cycle = request.POST['cycle']
         diet = request.POST['diet']
@@ -56,7 +58,7 @@ def fill_form(request):
             after_dry = after_dry,
         )
 
-    return render(request, "form.html",{})
+    return render(request, "eggsMonitorForm.html",{})
 
 def get_table1(request):
     all_measurements = Measurement.objects.get_queryset()
