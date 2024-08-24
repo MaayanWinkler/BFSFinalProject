@@ -1,0 +1,374 @@
+{% extends 'base.html' %}
+{% load static %}
+
+  <head>
+    <meta charset="UTF-8" />
+    {% load static %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rearing Monitor Form</title>
+  </head>
+  <body>
+    {% block content %}
+    <div class="main-panel">
+      <div class="page-inner">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <form method="post" action="{% url 'fill_rearing_monitor_form' %}">
+                <!-- <div class="card-header"></div> -->
+                <div class="card-title">Rearing Monitor</div>
+                <div class="card-body"></div>
+                <div class="form-group">
+                  <label for="crateCode">Crate Code (*)</label>
+                  <input type="text" id="crateCode" name="crateCode" required />
+                  <span class="error-message" id="crate-code-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="consortium">Consortium/Entoprotech/Breeding</label>
+                  <input type="text" id="consortium" name="consortium" />
+                  <span class="error-message" id="consortium-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="cycle">Cycle</label>
+                  <input type="text" id="cycle" name="cycle"/>
+                  <span class="error-message" id="cycle-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="box">Box</label>
+                  <input type="text" id="box" name="box" />
+                  <span class="error-message" id="box-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="goal">Goal</label>
+                  <input type="text" id="goal" name="goal" />
+                  <span class="error-message" id="goal-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="eggsCode">Eggs Code (*)</label>
+                  <input type="text" id="eggsCode" name="eggsCode" required />
+                  <span class="error-message" id="eggs-code-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="starterDate">Starter Date</label>
+                  <input
+                    type="datetime-local"
+                    id="starterDate"
+                    name="starterDate"
+                    format-value="yyyy-MM-ddTHH:mm"
+                    required
+                />
+                  <span class="error-message" id="starter-date-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="starterSize">Starter Size (g) (*)</label>
+                  <input type="text" id="starterSize" name="starterSize" required/>
+                  <span class="error-message" id="starter-size-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="starterDiet">Starter diet (*)</label>
+                  <input type="text" id="starterDiet" name="starterDiet" required/>
+                  <span class="error-message" id="starter-diet-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="lengthMeasureDate">Length Measure Date</label>
+                  <input
+                    type="datetime-local"
+                    id="lengthMeasureDate"
+                    name="lengthMeasureDate"
+                    format-value="yyyy-MM-ddTHH:mm"
+                    required
+                  />
+                  <span
+                    class="error-message"
+                    id="length-measure-date-error"
+                  ></span>
+                </div>
+                <div class="form-group">
+                  <label for="averageLength">Average Length (mm)</label>
+                  <input
+                    type="text"
+                    id="averageLength"
+                    name="averageLength"
+                  />
+                  <span class="error-message" id="average-length-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="cookingDate">Cooking Date</label>
+                  <input
+                    type="datetime-local"
+                    id="cookingDate"
+                    name="cookingDate"
+                    format-value="yyyy-MM-ddTHH:mm"
+                />
+                  <span class="error-message" id="cooking-date-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="dietType">Diet Type (*)</label>
+                  <input
+                    type="text"
+                    id="dietType"
+                    name="dietType"
+                    required
+                  />
+                  <span class="error-message" id="diet-type-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="measureDate">Measure date</label>
+                  <input
+                  type="datetime-local"
+                  id="measureDate"
+                  name="measureDate"
+                  format-value="yyyy-MM-ddTHH:mm"
+                  required
+                  />
+                  <span
+                    class="error-message"
+                    id="measure-date-error"
+                  ></span>
+                </div>
+                <div class="form-group">
+                  <label for="temp">Temp</label>
+                  <input
+                    type="text"
+                    id="temp"
+                    name="temp"
+                  />
+                  <span
+                    class="error-message"
+                    id="temp-error"
+                  ></span>
+                </div>
+                <div class="form-group">
+                  <label for="totalLarvaeWeight">Total Larvae Weight (mg)</label>
+                  <input
+                    type="text"
+                    id="totalLarvaeWeight"
+                    name="totalLarvaeWeight"
+                  />
+                  <span
+                    class="error-message"
+                    id="total-larvae-weight-error"
+                  ></span>
+                </div>
+                <div class="form-group">
+                  <label for="numberOfLarvaeSampled">Number of larvae sampled</label>
+                  <input type="text" id="numberOfLarvaeSampled" name="numberOfLarvaeSampled" />
+                  <span class="error-message" id="number-of-larvae-sampled-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="pupation">% Pupation</label>
+                  <input
+                    type="text"
+                    id="pupation"
+                    name="pupation"
+                  />
+                  <span class="error-message" id="pupation-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="substrateBeforeDrying">Substrate before drying, gr</label>
+                  <input
+                    type="text"
+                    id="substrateBeforeDrying"
+                    name="substrateBeforeDrying"
+                  />
+                  <span class="error-message" id="substrate-before-drying-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="substrateAfterDrying">Substrate after drying, gr</label>
+                  <input
+                    type="text"
+                    id="substrateAfterDrying"
+                    name="substrateAfterDrying"
+                  />
+                  <span class="error-message" id="substrate-after-drying-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="harvestDate">Harvest Date</label>
+                  <input
+                    type="datetime-local"
+                    id="harvestDate"
+                    name="harvestDate"
+                    format-value="yyyy-MM-ddTHH:mm"
+                />
+                  <span class="error-message" id="harvest-date-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="totalPupaeWeight">Total pupae/Larvae weight, kg</label>
+                  <input
+                    type="text"
+                    id="totalPupaeWeight"
+                    name="totalPupaeWeight"
+                  />
+                  <span class="error-message" id="total-pupae-weight-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="larvaeWeight">Larvae/pupae weight (g)</label>
+                  <input
+                    type="text"
+                    id="larvaeWeight"
+                    name="larvaeWeight"
+                  />
+                  <span class="error-message" id="larvae-weight-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="numberOfLarvaePupaeSampled">Number of larvae/pupae sampled</label>
+                  <input
+                    type="text"
+                    id="numberOfLarvaePupaeSampled"
+                    name="numberOfLarvaePupaeSampled"
+                  />
+                  <span class="error-message" id="number-of-larvae-pupae-sampled-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="cageCode">Cage Code</label>
+                  <input
+                    type="text"
+                    id="cageCode"
+                    name="cageCode"
+                  />
+                  <span class="error-message" id="cage-code-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="comments">Comments</label>
+                  <input
+                    type="text"
+                    id="comments"
+                    name="comments"
+                  />
+                  <span class="error-message" id="comments-error"></span>
+                </div>
+                <div class="card-action">
+                  <div class="success-message" id="success-message"></div>
+                  {% csrf_token %}
+                  <!-- <button class="btn btn-success" id="submit">Submit</button> -->
+                  <input id="submit" type="submit" value="Submit" />
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endblock %}
+  </body>
+
+  {% block extra_css %}
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="{%  static 'styles/form.css' %}" />
+  <link rel="stylesheet" href="{%  static 'css/bootstrap.min.css' %}" />
+  <link rel="stylesheet" href="{%  static '/css/kaiadmin.min.css' %}" />
+  <style>
+    .error-message {
+      color: red;
+    }
+
+    .success-message {
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+  {% endblock %}
+
+  {% block extra_js %}
+  <script>
+    document.getElementById("submit").addEventListener("click", validateForm);
+
+    function validateForm() {
+      const crateCodeInput = document.getElementById("crateCode");
+      const consortiumInput = document.getElementById("consortium");
+      const cycleInput = document.getElementById("cycle");
+      const boxInput = document.getElementById("box");
+      const goalInput = document.getElementById("goal");
+      const eggsCodeInput = document.getElementById("eggsCode");
+      const starterDateInput = document.getElementById("starterDate");
+      const starterSizeInput = document.getElementById("starterSize");
+      const starterDietInput = document.getElementById("starterDiet");
+      const lengthMeasureDateInput = document.getElementById("lengthMeasureDate");
+      const averageLengthInput = document.getElementById("averageLength");
+      const cookingDateInput = document.getElementById("cookingDate");
+      const dietTypeInput = document.getElementById("dietType");
+      const measureDateInput = document.getElementById("measureDate");
+      const tempInput = document.getElementById("temp");
+      const totalLarvaeWeightInput = document.getElementById("totalLarvaeWeight");
+      const numberOfLarvaeSampledInput = document.getElementById("numberOfLarvaeSampled");
+      const pupationInput = document.getElementById("pupation");
+      const substrateBeforeDryingInput = document.getElementById("substrateBeforeDrying");
+      const substrateAfterDryingInput = document.getElementById("substrateAfterDrying");
+      const harvestDateInput = document.getElementById("harvestDate");
+      const totalPupaeWeightInput = document.getElementById("totalPupaeWeight");
+      const larvaeWeightInput = document.getElementById("larvaeWeight");
+      const numberOfLarvaePupaeSampledInput = document.getElementById("numberOfLarvaePupaeSampled");
+      const cageCodeInput = document.getElementById("cageCode");
+      const commentsInput = document.getElementById("comments");
+
+      // Validation functions
+      function validateInputReceived(input, errorId) {
+        const dateTimeValue = input.value;
+        if (!dateTimeValue) {
+          document.getElementById(errorId).textContent =
+            "This is a mandatory field!";
+          return false;
+        }
+        return true;
+      }
+
+      function validateFloat(input, errorId) {
+        const value = input.value;
+        if (value && !/^\d+(\.\d+)?$/.test(value)) {
+          document.getElementById(errorId).textContent =
+            "Please enter only float numbers";
+          return false;
+        }
+        return true;
+      }
+
+      function validateInteger(input, errorId) {
+        const value = input.value;
+        if (value && /^\d+(\.\d+)?$/.test(value)) {
+          document.getElementById(errorId).textContent =
+            "Please enter only integer numbers";
+          return false;
+        }
+        return true;
+      }
+
+      const errorElements = document.querySelectorAll(".error-message");
+      for (const i = 0; i < errorElements.length; i++) {
+        errorElements[i].textContent = "";
+      }
+
+      if (
+        validateInputReceived(crateCodeInput, "crate-code-error") &&
+        validateInputReceived(eggsCodeInput, "eggs-code-error") &&
+        validateInputReceived(starterDateInput, "starter-date-error") &&
+        validateInputReceived(starterSizeInput, "starter-size-error") &&
+        validateInputReceived(starterDietInput, "starter-diet-error") &&
+        validateInputReceived(dietTypeInput, "diet-type-error") &&
+        validateInteger(cycleInput, "cycle-error") &&
+        validateInteger(boxInput, "box-error") &&
+        validateFloat(tempInput, "temp-error") &&
+        validateInteger(totalLarvaeWeightInput, "total-larvae-weight-error") &&
+        validateInteger(numberOfLarvaeSampledInput, "number-of-larvae-sampled-error") &&
+        validateFloat(totalPupaeWeightInput, "total-pupae-weight-error") &&
+        validateFloat(larvaeWeightInput, "larvae-weight-error") &&
+        validateInteger(numberOfLarvaePupaeSampledInput, "number-of-larvae-pupae-sampled-error")
+      ) {
+        document.getElementById("success-message").textContent =
+          "Data inserted successfully";
+
+        // Hide the success message after 3 seconds
+        setTimeout(function () {
+          document.getElementById("success-message").textContent = "";
+        }, 900000);
+
+        return true;
+      } else {
+        // Clear success message if there are errors
+        document.getElementById("success-message").textContent = "";
+        return false;
+      }
+    }
+  </script>
+    {% endblock %}
+
+</html>

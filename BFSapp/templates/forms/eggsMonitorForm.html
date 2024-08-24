@@ -1,23 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+{% load static %}
+
   <head>
     <meta charset="UTF-8" />
     {% load static %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Eggs Monitoring Form</title>
-    <link rel="stylesheet" href="{%  static 'styles/form.css' %}" />
-    <style>
-      .error-message {
-        color: red;
-      }
-
-      .success-message {
-        color: green;
-        font-weight: bold;
-      }
-    </style>
   </head>
   <body>
+    {% block content %}
     <div class="main-panel">
       <div class="page-inner">
         <div class="row">
@@ -25,7 +16,7 @@
             <div class="card">
               <form method="post" action="{% url 'fill_eggs_monitor_form' %}">
                 <!-- <div class="card-header"></div> -->
-                <div class="card-title">Eggs Monitoring</div>
+                <div class="card-title">Eggs Monitoring (*)</div>
                 <div class="card-body"></div>
                 <div class="form-group">
                   <label for="dateTime">Collection Date and Time (*)</label>
@@ -176,11 +167,19 @@
                   />
                   <span class="error-message" id="incubation-tube-error"></span>
                 </div>
+                <label for="comments">Comments</label>
+                <input
+                  type="text"
+                  id="comments"
+                  name="comments"
+                />
+                <span class="error-message" id="comments-error"></span>
+              </div>
                 <div class="card-action">
                   <div class="success-message" id="success-message"></div>
                   {% csrf_token %}
                   <!-- <button class="btn btn-success" id="submit">Submit</button> -->
-                  <input type="submit" value="Vote" />
+                  <input id="submit" type="submit" value="Submit" />
                 </div>
               </form>
             </div>
@@ -188,76 +187,64 @@
         </div>
       </div>
     </div>
+    {% endblock %}
   </body>
 
-  <script src="{%  static 'js/loadSideBar.js' %}"></script>
-  <script
-    type="text/javascript"
-    src="{%  static 'js/plugin/webfont/webfont.min.js' %}"
-  ></script>
-  <script src="{%  static 'js/plugin/webfont/webfont.min.js' %}"></script>
+  {% block extra_css %}
   <!-- CSS Files -->
+  <link rel="stylesheet" href="{%  static 'styles/form.css' %}" />
   <link rel="stylesheet" href="{%  static 'css/bootstrap.min.css' %}" />
-  <link rel="stylesheet" href="{%  static 'css/plugins.min.css' %}" />
   <link rel="stylesheet" href="{%  static '/css/kaiadmin.min.css' %}" />
-  <script src="{%  static 'js/core/jquery-3.7.1.min.js' %}"></script>
-  <script src="{%  static 'js/core/popper.min.js' %}"></script>
-  <script src="{%  static 'js/core/bootstrap.min.js' %}"></script>
-  <script>
-    WebFont.load({
-      google: { families: ["Public Sans:300,400,500,600,700"] },
-      custom: {
-        families: [
-          "Font Awesome 5 Solid",
-          "Font Awesome 5 Regular",
-          "Font Awesome 5 Brands",
-          "simple-line-icons",
-        ],
-        urls: ["static/css/fonts.min.css"],
-      },
-      active: function () {
-        sessionStorage.fonts = true;
-      },
-    });
-  </script>
+  <style>
+    .error-message {
+      color: red;
+    }
 
+    .success-message {
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+  {% endblock %}
+
+  {% block extra_js %}
   <script>
     document.getElementById("submit").addEventListener("click", validateForm);
 
     function validateForm() {
-      var dateTimeInput = document.getElementById("dateTime");
-      var cageCodeInput = document.getElementById("cageCode");
-      var eggsCodeInput = document.getElementById("eggsCode");
+      const dateTimeInput = document.getElementById("dateTime");
+      const cageCodeInput = document.getElementById("cageCode");
+      const eggsCodeInput = document.getElementById("eggsCode");
 
-      var weightEgg1Input = document.getElementById("weightEgg1");
-      var weightEgg2Input = document.getElementById("weightEgg2");
-      var weightEgg3Input = document.getElementById("weightEgg3");
+      const weightEgg1Input = document.getElementById("weightEgg1");
+      const weightEgg2Input = document.getElementById("weightEgg2");
+      const weightEgg3Input = document.getElementById("weightEgg3");
 
-      var numberEggs1Input = document.getElementById("numberEggs1");
-      var numberEggs2Input = document.getElementById("numberEggs2");
-      var numberEggs3Input = document.getElementById("numberEggs3");
+      const numberEggs1Input = document.getElementById("numberEggs1");
+      const numberEggs2Input = document.getElementById("numberEggs2");
+      const numberEggs3Input = document.getElementById("numberEggs3");
 
-      var totalEggsWeightInput = document.getElementById("total_eggs_weight");
+      const totalEggsWeightInput = document.getElementById("total_eggs_weight");
 
-      var numberFertile1Input = document.getElementById("numberFertileEggs1");
-      var numberFertile2Input = document.getElementById("numberFertileEggs2");
-      var numberFertile3Input = document.getElementById("numberFertileEggs3");
+      const numberFertile1Input = document.getElementById("numberFertileEggs1");
+      const numberFertile2Input = document.getElementById("numberFertileEggs2");
+      const numberFertile3Input = document.getElementById("numberFertileEggs3");
 
-      var numberInfertile1Input = document.getElementById(
+      const numberInfertile1Input = document.getElementById(
         "numberInfertileEggs1"
       );
-      var numberInfertile2Input = document.getElementById(
+      const numberInfertile2Input = document.getElementById(
         "numberInfertileEggs2"
       );
-      var numberInfertile3Input = document.getElementById(
+      const numberInfertile3Input = document.getElementById(
         "numberInfertileEggs3"
       );
 
-      var targetDensityInput = document.getElementById("targetDensity");
+      const targetDensityInput = document.getElementById("targetDensity");
 
       // Validation functions
       function validateInputReceived(input, errorId) {
-        var dateTimeValue = input.value;
+        const dateTimeValue = input.value;
         if (!dateTimeValue) {
           document.getElementById(errorId).textContent =
             "This is a mandatory field!";
@@ -267,7 +254,7 @@
       }
 
       function validateFloat(input, errorId) {
-        var value = input.value;
+        const value = input.value;
         if (value && !/^\d+(\.\d+)?$/.test(value)) {
           document.getElementById(errorId).textContent =
             "Please enter only float numbers";
@@ -277,7 +264,7 @@
       }
 
       function validateInteger(input, errorId) {
-        var value = input.value;
+        const value = input.value;
         if (value && /^\d+(\.\d+)?$/.test(value)) {
           document.getElementById(errorId).textContent =
             "Please enter only integer numbers";
@@ -286,8 +273,8 @@
         return true;
       }
 
-      var errorElements = document.querySelectorAll(".error-message");
-      for (var i = 0; i < errorElements.length; i++) {
+      const errorElements = document.querySelectorAll(".error-message");
+      for (const i = 0; i < errorElements.length; i++) {
         errorElements[i].textContent = "";
       }
 
@@ -326,4 +313,6 @@
       }
     }
   </script>
+    {% endblock %}
+
 </html>

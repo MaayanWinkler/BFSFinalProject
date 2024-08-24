@@ -2,8 +2,8 @@ from django.shortcuts import render , redirect ,HttpResponse, HttpResponseRedire
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from .models import EggMonitor
-# from .models import Measurement
+from .models import EggMonitor , RearingMonitor
+from datetime import datetime
 
 # Create your views here.
  
@@ -119,10 +119,148 @@ def fill_eggs_monitor_form(request):
         )
 
         # Redirect to a success page or return a success message
-        return HttpResponse("Data inserted successfully")
+        # return HttpResponse("Data inserted successfully")
 
     # If GET request, just render the form
-    return render(request, "eggsMonitorForm.html", {})
+    return render(request, "forms/eggsMonitorForm.html", {})
+
+def fill_rearing_monitor_form(request):
+    if request.method == 'POST':
+        print (request.POST)
+        # Retrieve data from the POST request and handle empty strings
+        crate_code = request.POST.get('crateCode')
+        eggs_code = request.POST.get('eggsCode')
+        starter_date = request.POST.get('starterDate')
+        starter_size = request.POST.get('starterSize')
+        starter_diet = request.POST.get('starterDiet')
+        diet_type = request.POST.get('dietType')
+        
+        consortium = request.POST.get('consortium') or None
+        cycle = request.POST.get('cycle') or None
+        box = request.POST.get('box') or None
+        goal = request.POST.get('goal') or None
+        length_measure_date = request.POST.get('lengthMeasureDate') or None
+        average_length = request.POST.get('averageLength') or None
+        cooking_date = request.POST.get('cookingDate') or None
+        measure_date = request.POST.get('measureDate') or None
+        temp = request.POST.get('temp') or None
+        total_larvae_weight = request.POST.get('totalLarvaeWeight') or None
+        number_of_larvae_sampled = request.POST.get('numberOfLarvaeSampled') or None
+        pupation = request.POST.get('pupation') or None
+        substrate_before_drying = request.POST.get('substrateBeforeDrying') or None
+        substrate_after_drying = request.POST.get('substrateAfterDrying') or None
+        harvest_date = request.POST.get('harvestDate') or None
+        total_pupae_weight = request.POST.get('totalPupaeWeight') or None
+        larvae_weight = request.POST.get('larvaeWeight') or None
+        number_of_larvae_pupae_sampled = request.POST.get('numberOfLarvaePupaeSampled') or None
+        cage_code = request.POST.get('cageCode') or None
+
+        # Calculating additional fields only if necessary
+        if starter_date and length_measure_date:
+            date_format = "%Y-%m-%dT%H:%M"  # Adjust format to match your date string format (e.g., "2023-08-23")
+            date1 = datetime.strptime(starter_date, date_format)
+            date2 = datetime.strptime(length_measure_date, date_format)
+
+            delta = date2 - date1
+            starter_age = delta.days
+        else:
+            starter_age = None
+
+        if total_larvae_weight and number_of_larvae_sampled:
+            single_larva_weight = (float(total_larvae_weight) / float(number_of_larvae_sampled))
+        else:
+            single_larva_weight = None
+
+        if harvest_date and starter_date:
+            date_format = "%Y-%m-%dT%H:%M"  # Adjust format to match your date string format (e.g., "2023-08-23")
+            date1 = datetime.strptime(harvest_date, date_format)
+            date2 = datetime.strptime(starter_date, date_format)
+
+            delta = date2 - date1
+            days_from_laying = delta.days
+        else:
+            days_from_laying = None
+
+        if harvest_date and cooking_date:
+            date_format = "%Y-%m-%dT%H:%M"  # Adjust format to match your date string format (e.g., "2023-08-23")
+            date1 = datetime.strptime(harvest_date, date_format)
+            date2 = datetime.strptime(cooking_date, date_format)
+
+            delta = date2 - date1
+            days_from_cooking = delta.days
+        else:
+            days_from_cooking = None
+
+        if larvae_weight and number_of_larvae_pupae_sampled:
+            single_larvae_pupae_weight = 1000 * (float(larvae_weight) / float(number_of_larvae_pupae_sampled))
+        else:
+            single_larvae_pupae_weight = None
+        
+        if total_pupae_weight and single_larvae_pupae_weight:
+            total_larvae_count = (float(larvae_weight) / (float(number_of_larvae_pupae_sampled) / 1000000 ))
+        else:
+            total_larvae_count = None
+
+        if total_larvae_count:
+            survival_percentage = 100 * (float(total_larvae_count) / 8000)
+        else:
+            survival_percentage = None
+        
+
+        comments = "No comments"  # You can retrieve this from a form field if necessary
+
+
+        # Retrieve the EggMonitor instance
+        try:
+            eggs_code_instance = EggMonitor.objects.get(eggs_code = int(eggs_code))
+        except EggMonitor.DoesNotExist:
+            eggs_code_instance = None  # Handle the case where the instance does not exist
+            return HttpResponse("EggMonitor instance not found :(")
+
+
+
+        # Save the data to the database
+        RearingMonitor.objects.create(
+            crate_code=crate_code,
+            consortium_entoprotech_breeding=consortium,
+            cycle=int(cycle) if cycle else None,
+            box=int(box) if box else None,
+            goal=goal,
+            eggs_code=eggs_code_instance,  # Ensure eggs_code is an EggMonitor instance
+            starter_date=starter_date,
+            starter_size=int(starter_size) if starter_size else None,
+            starter_diet=starter_diet,
+            length_measure_date=length_measure_date,
+            average_length=float(average_length) if average_length else None,
+            starter_age=starter_age,
+            cooking_date=cooking_date,
+            diet_type=diet_type,
+            measure_date=measure_date,
+            temperature=float(temp) if temp else None,
+            total_larvae_weight=int(total_larvae_weight) if total_larvae_weight else None,
+            number_of_larvae_sampled=int(number_of_larvae_sampled) if number_of_larvae_sampled else None,
+            single_larva_weight=int(single_larva_weight) if single_larva_weight else None,
+            pupation_percentage=float(pupation) if pupation else None,
+            substrate_before_drying=float(substrate_before_drying) if substrate_before_drying else None,
+            substrate_after_drying=float(substrate_after_drying) if substrate_after_drying else None,
+            harvest_date=harvest_date,
+            days_from_laying=days_from_laying,
+            days_from_cooking=days_from_cooking,
+            total_pupae_larvae_weight=float(total_pupae_weight) if total_pupae_weight else None,
+            larvae_pupae_weight=float(larvae_weight) if larvae_weight else None,
+            number_of_larvae_pupae_sampled=int(number_of_larvae_pupae_sampled) if number_of_larvae_pupae_sampled else None,
+            single_larvae_pupae_weight=int(single_larvae_pupae_weight) if single_larvae_pupae_weight else None,
+            total_larvae_count=int(total_larvae_count) if total_larvae_count else None,
+            survival_percentage=int(survival_percentage) if survival_percentage else None,
+            cage_code=cage_code,
+            comments=comments
+        )
+
+        # Redirect to a success page or return a success message
+        # return HttpResponse("Data inserted successfully")
+
+    # If GET request, just render the form
+    return render(request, "forms/rearingMonitorForm.html", {})
 
 def get_table1(request):
     all_eggs_monitors = EggMonitor.objects.get_queryset()

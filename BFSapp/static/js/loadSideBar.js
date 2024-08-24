@@ -1,11 +1,10 @@
 const loadSidebar = function () {
-    const sideBarDiv = 
-    `<div class="sidebar" data-background-color="dark">
+  const sideBarDiv = `<div class="sidebar" data-background-color="dark">
         <div class="sidebar-logo">
           <!-- Logo Header -->
           <div class="logo-header" data-background-color="dark">
                                     <img
-                                      src="static/img/logogood.png"
+                                      src="../static/img/logogood.png"
                                       alt="logo"
                                       class="navbar-brand" height="35
                                     />
@@ -52,18 +51,18 @@ const loadSidebar = function () {
                 <div class="collapse" id="forms">
                   <ul class="nav nav-collapse">
                     <li class="active">
-                      <a href="/eggsMonitorForm"> 
+                      <a href="/forms/eggsMonitorForm"> 
                         <span class="sub-item">Eggs Monitoring</span>
                       </a>
                     </li>
                     <li>
-                      <a href="form"> 
-                        <span class="sub-item">Basic Form</span>
+                      <a href="/forms/rearingMonitorForm"> 
+                        <span class="sub-item">Rearing Monitoring</span>
                       </a>
                     </li>
                     <li>
-                      <a href="form"> 
-                        <span class="sub-item">Basic Form</span>
+                      <a href="/forms/breedingMonitorForm"> 
+                        <span class="sub-item">Breeding Monitoring</span>
                       </a>
                     </li>
                   </ul>
@@ -105,9 +104,9 @@ const loadSidebar = function () {
             </ul>
           </div>
         </div>
-      </div>`
-    const body = document.querySelector(".page-inner");
-    body.insertAdjacentHTML('beforebegin', sideBarDiv);
-}
+      </div>`;
+  const body = document.querySelector(".page-inner");
+  body.insertAdjacentHTML("beforebegin", sideBarDiv);
+};
 
- loadSidebar()
+loadSidebar();
