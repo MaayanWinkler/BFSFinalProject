@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load static %}
+
+  <head>
+    <meta charset="UTF-8" />
+    {% load static %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Egg Monitor Database</title>
+  </head>
+  <body>
+    {% block content %}
+    <div class="main-panel">
+      <div class="page-inner">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Egg Monitor Database</h4>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table
+                    id="multi-filter-select"
+                    class="display table table-striped table-hover"
+                  >
+                    <thead>
+                      <tr>
+                        <th>Date Measured</th>
+                        <th>Cage Code</th>
+                        <th>Eggs Code</th>
+                        <th>Egg Weight 1</th>
+                        <th>Egg Weight 2</th>
+                        <th>Egg Weight 3</th>
+                        <th>Num Eggs 1</th>
+                        <th>Num Eggs 2</th>
+                        <th>Num Eggs 3</th>
+                        <th>Average Single Weight</th>
+                        <th>RSD Single Weight</th>
+                        <th>Total Eggs Weight</th>
+                        <th>Added Eggs</th>
+                        <th>Fertile Eggs 1</th>
+                        <th>Fertile Eggs 2</th>
+                        <th>Fertile Eggs 3</th>
+                        <th>Infertile Eggs 1</th>
+                        <th>Infertile Eggs 2</th>
+                        <th>Infertile Eggs 3</th>
+                        <th>Fertility Percentage</th>
+                        <th>RSD Fertility Percentage</th>
+                        <th>Target Density</th>
+                        <th>Amount of Added Eggs</th>
+                        <th>Incubation Temp</th>
+                        <th>Incubation Tube</th>
+                        <th>Comments</th>
+                      </tr>
+                    </thead>
+                    <tfoot>
+                      <tr>
+                        <th>Date Measured</th>
+                        <th>Cage Code</th>
+                        <th>Eggs Code</th>
+                        <th>Egg Weight 1</th>
+                        <th>Egg Weight 2</th>
+                        <th>Egg Weight 3</th>
+                        <th>Num Eggs 1</th>
+                        <th>Num Eggs 2</th>
+                        <th>Num Eggs 3</th>
+                        <th>Average Single Weight</th>
+                        <th>RSD Single Weight</th>
+                        <th>Total Eggs Weight</th>
+                        <th>Added Eggs</th>
+                        <th>Fertile Eggs 1</th>
+                        <th>Fertile Eggs 2</th>
+                        <th>Fertile Eggs 3</th>
+                        <th>Infertile Eggs 1</th>
+                        <th>Infertile Eggs 2</th>
+                        <th>Infertile Eggs 3</th>
+                        <th>Fertility Percentage</th>
+                        <th>RSD Fertility Percentage</th>
+                        <th>Target Density</th>
+                        <th>Amount of Added Eggs</th>
+                        <th>Incubation Temp</th>
+                        <th>Incubation Tube</th>
+                        <th>Comments</th>
+                      </tr>
+                    </tfoot>
+                    <tbody>
+                      {% for row in data_from_server %}
+                      <tr>
+                        <td>{{ row.col1 }}</td>
+                        <td>{{ row.col2 }}</td>
+                        <td>{{ row.col3 }}</td>
+                        <td>{{ row.col4 }}</td>
+                        <td>{{ row.col5 }}</td>
+                        <td>{{ row.col6 }}</td>
+                        <td>{{ row.col7 }}</td>
+                        <td>{{ row.col8 }}</td>
+                        <td>{{ row.col9 }}</td>
+                        <td>{{ row.col10 }}</td>
+                        <td>{{ row.col11 }}</td>
+                        <td>{{ row.col12 }}</td>
+                        <td>{{ row.col13 }}</td>
+                        <td>{{ row.col14 }}</td>
+                        <td>{{ row.col15 }}</td>
+                        <td>{{ row.col16 }}</td>
+                        <td>{{ row.col17 }}</td>
+                        <td>{{ row.col18 }}</td>
+                        <td>{{ row.col19 }}</td>
+                        <td>{{ row.col20 }}</td>
+                        <td>{{ row.col21 }}</td>
+                        <td>{{ row.col22 }}</td>
+                        <td>{{ row.col23 }}</td>
+                        <td>{{ row.col24 }}</td>
+                        <td>{{ row.col25 }}</td>
+                        <td>{{ row.col26 }}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endblock %}
+  </body>
+
+  {% block extra_js %}
+  <!-- Script Files -->
+  <script src="{% static 'js/plugin/datatables/datatables.min.js' %}"></script>
+
+  <script>
+    WebFont.load({
+      google: { families: ["Public Sans:300,400,500,600,700"] },
+      custom: {
+        families: [
+          "Font Awesome 5 Solid",
+          "Font Awesome 5 Regular",
+          "Font Awesome 5 Brands",
+          "simple-line-icons",
+        ],
+        urls: ["static/css/fonts.min.css"],
+      },
+      active: function () {
+        sessionStorage.fonts = true;
+      },
+    });
+  </script>
+
+  <script>
+    $(document).ready(function () {
+      $("#multi-filter-select").DataTable({
+        pageLength: 5,
+        initComplete: function () {
+          this.api()
+            .columns()
+            .every(function () {
+              var column = this;
+              var select = $(
+                '<select class="form-select"><option value=""></option></select>'
+              )
+                .appendTo($(column.footer()).empty())
+                .on("change", function () {
+                  var val = $.fn.dataTable.util.escapeRegex($(this).val());
+
+                  column.search(val ? "^" + val + "$" : "", true, false).draw();
+                });
+
+              column
+                .data()
+                .unique()
+                .sort()
+                .each(function (d, j) {
+                  select.append('<option value="' + d + '">' + d + "</option>");
+                });
+            });
+        },
+      });
+    });
+  </script>
+{% endblock %}
+</html>

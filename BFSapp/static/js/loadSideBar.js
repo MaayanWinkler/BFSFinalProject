@@ -77,18 +77,18 @@ const loadSidebar = function () {
                 <div class="collapse" id="tables">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="/table1">
+                      <a href="/tables/eggMonitorTable">
                         <span class="sub-item">Eggs Monitoring Table</span>
                       </a>
                     </li>
                     <li>
-                      <a href="tables/datatables.html">
-                        <span class="sub-item">Datatables</span>
+                      <a href="/tables/rearingMonitorTable">
+                        <span class="sub-item">Rearing Monitoring Table</span>
                       </a>
                     </li>
                     <li>
-                      <a href="tables/datatables.html">
-                        <span class="sub-item">Datatables</span>
+                      <a href="/tables/breedingMonitorTable">
+                        <span class="sub-item">Breeding Monitoring Table</span>
                       </a>
                     </li>
                   </ul>

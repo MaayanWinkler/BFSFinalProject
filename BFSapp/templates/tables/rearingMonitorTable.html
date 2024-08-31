@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% load static %}
+
+  <head>
+    <meta charset="UTF-8" />
+    {% load static %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Egg Monitor Database</title>
+  </head>
+  <body>
+    {% block content %}
+    <div class="main-panel">
+      <div class="page-inner">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Rearing Monitor Database</h4>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table
+                    id="multi-filter-select"
+                    class="display table table-striped table-hover"
+                  >
+                    <thead>
+                      <tr>
+                        <th>Crate code</th>
+                        <th>Consortium/Entoprotech/Breeding</th>
+                        <th>Cycle</th>
+                        <th>Box</th>
+                        <th>Goal</th>
+                        <th>Eggs code</th>
+                        <th>Average single egg weight (mg)</th>
+                        <th>% fertility</th>
+                        <th>Target density</th>
+                        <th>Starter Date</th>
+                        <th>Starter Size (g)</th>
+                        <th>Starter diet</th>
+                        <th>Length measure date</th>
+                        <th>Average length (mm)</th>
+                        <th>Starter age (days)</th>
+                        <th>Cooking date</th>
+                        <th>Diet type</th>
+                        <th>Measure date</th>
+                        <th>Temp</th>
+                        <th>Total larvae weight (mg)</th>
+                        <th>Number of larvae sampled</th>
+                        <th>Single larva weight (mg)</th>
+                        <th>% pupation</th>
+                        <th>Substrate before drying (gr)</th>
+                        <th>Substrate after drying (gr)</th>
+                        <th>Harvest date</th>
+                        <th>Days from Laying</th>
+                        <th>Days from cooking</th>
+                        <th>Total pupae/Larvae weight (kg)</th>
+                        <th>Larvae/pupae weight (g)</th>
+                        <th>Number of larvae/pupae sampled</th>
+                        <th>Single larvae/pupae weight (g)</th>
+                        <th>Total larvae count</th>
+                        <th>% survival</th>
+                        <th>Cage code</th>
+                        <th>Comments</th>
+                      </tr>
+                    </thead>
+                    <tfoot>
+                      <tr>
+                        <th>Crate code</th>
+                        <th>Consortium/Entoprotech/Breeding</th>
+                        <th>Cycle</th>
+                        <th>Box</th>
+                        <th>Goal</th>
+                        <th>Eggs code</th>
+                        <th>Average single egg weight (mg)</th>
+                        <th>% fertility</th>
+                        <th>Target density</th>
+                        <th>Starter Date</th>
+                        <th>Starter Size (g)</th>
+                        <th>Starter diet</th>
+                        <th>Length measure date</th>
+                        <th>Average length (mm)</th>
+                        <th>Starter age (days)</th>
+                        <th>Cooking date</th>
+                        <th>Diet type</th>
+                        <th>Measure date</th>
+                        <th>Temp</th>
+                        <th>Total larvae weight (mg)</th>
+                        <th>Number of larvae sampled</th>
+                        <th>Single larva weight (mg)</th>
+                        <th>% pupation</th>
+                        <th>Substrate before drying (gr)</th>
+                        <th>Substrate after drying (gr)</th>
+                        <th>Harvest date</th>
+                        <th>Days from Laying</th>
+                        <th>Days from cooking</th>
+                        <th>Total pupae/Larvae weight (kg)</th>
+                        <th>Larvae/pupae weight (g)</th>
+                        <th>Number of larvae/pupae sampled</th>
+                        <th>Single larvae/pupae weight (g)</th>
+                        <th>Total larvae count</th>
+                        <th>% survival</th>
+                        <th>Cage code</th>
+                        <th>Comments</th>
+                      </tr>
+                    </tfoot>
+                    <tbody>
+                      {% for row in data_from_server %}
+                      <tr>
+                        <td>{{ row.col1 }}</td>
+                        <td>{{ row.col2 }}</td>
+                        <td>{{ row.col3 }}</td>
+                        <td>{{ row.col4 }}</td>
+                        <td>{{ row.col5 }}</td>
+                        <td>{{ row.col6 }}</td>
+                        <td>{{ row.col7 }}</td>
+                        <td>{{ row.col8 }}</td>
+                        <td>{{ row.col9 }}</td>
+                        <td>{{ row.col10 }}</td>
+                        <td>{{ row.col11 }}</td>
+                        <td>{{ row.col12 }}</td>
+                        <td>{{ row.col13 }}</td>
+                        <td>{{ row.col14 }}</td>
+                        <td>{{ row.col15 }}</td>
+                        <td>{{ row.col16 }}</td>
+                        <td>{{ row.col17 }}</td>
+                        <td>{{ row.col18 }}</td>
+                        <td>{{ row.col19 }}</td>
+                        <td>{{ row.col20 }}</td>
+                        <td>{{ row.col21 }}</td>
+                        <td>{{ row.col22 }}</td>
+                        <td>{{ row.col23 }}</td>
+                        <td>{{ row.col24 }}</td>
+                        <td>{{ row.col25 }}</td>
+                        <td>{{ row.col26 }}</td>
+                        <td>{{ row.col27 }}</td>
+                        <td>{{ row.col28 }}</td>
+                        <td>{{ row.col29 }}</td>
+                        <td>{{ row.col30 }}</td>
+                        <td>{{ row.col31 }}</td>
+                        <td>{{ row.col32 }}</td>
+                        <td>{{ row.col33 }}</td>
+                        <td>{{ row.col34 }}</td>
+                        <td>{{ row.col35 }}</td>
+                        <td>{{ row.col36 }}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endblock %}
+  </body>
+
+  {% block extra_js %}
+  <!-- Script Files -->
+  <script src="{% static 'js/plugin/datatables/datatables.min.js' %}"></script>
+
+  <script>
+    WebFont.load({
+      google: { families: ["Public Sans:300,400,500,600,700"] },
+      custom: {
+        families: [
+          "Font Awesome 5 Solid",
+          "Font Awesome 5 Regular",
+          "Font Awesome 5 Brands",
+          "simple-line-icons",
+        ],
+        urls: ["static/css/fonts.min.css"],
+      },
+      active: function () {
+        sessionStorage.fonts = true;
+      },
+    });
+  </script>
+
+  <script>
+    $(document).ready(function () {
+      $("#multi-filter-select").DataTable({
+        pageLength: 5,
+        initComplete: function () {
+          this.api()
+            .columns()
+            .every(function () {
+              var column = this;
+              var select = $(
+                '<select class="form-select"><option value=""></option></select>'
+              )
+                .appendTo($(column.footer()).empty())
+                .on("change", function () {
+                  var val = $.fn.dataTable.util.escapeRegex($(this).val());
+
+                  column.search(val ? "^" + val + "$" : "", true, false).draw();
+                });
+
+              column
+                .data()
+                .unique()
+                .sort()
+                .each(function (d, j) {
+                  select.append('<option value="' + d + '">' + d + "</option>");
+                });
+            });
+        },
+      });
+    });
+  </script>
+{% endblock %}
+</html>

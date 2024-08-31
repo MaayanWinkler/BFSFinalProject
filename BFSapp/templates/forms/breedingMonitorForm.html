@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load static %}
+
+  <head>
+    <meta charset="UTF-8" />
+    {% load static %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Breeding Monitor Form</title>
+  </head>
+  <body>
+    {% block content %}
+    <div class="main-panel">
+      <div class="page-inner">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <form method="post" action="{% url 'fill_breeding_monitor_form' %}">
+                <!-- <div class="card-header"></div> -->
+                <div class="card-title">Breeding Monitor</div>
+                <div class="card-body"></div>
+                <div class="form-group">
+                  <label for="crate-code">Crate Code (*)</label>
+                  <input type="text" id="crate-code" name="crate-code" required />
+                  <span class="error-message" id="crate-code-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="cage-code">Cage Code (*)</label>
+                  <input type="text" id="cage-code" name="cage-code" required/>
+                  <span class="error-message" id="cage-code-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="cage-date">Cage Date (*)</label>
+                  <input
+                    type="datetime-local"
+                    id="cage-date"
+                    name="cage-date"
+                    format-value="yyyy-MM-ddTHH:mm"
+                    required
+                  />
+                  <span class="error-message" id="cage-date-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="goal">Goal</label>
+                  <input type="text" id="goal" name="goal"/>
+                  <span class="error-message" id="goal-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="cage-geometry">Cage geometry, m3</label>
+                  <input type="text" id="cage-geometry" name="cage-geometry"/>
+                  <span class="error-message" id="cage-geometry-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="target-density">Target density, imago/m3</label>
+                  <input type="text" id="target-density" name="target-density" required/>
+                  <span class="error-message" id="target-density-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="amount-of-eggis">Amount of eggis</label>
+                  <input type="text" id="amount-of-eggis" name="amount-of-eggis"/>
+                  <span class="error-message" id="amount-of-eggis-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="hydrogel-surface-area">Hydrogel surface area, cm2 (pi*R2  Or  L*W) </label>
+                  <input type="text" id="hydrogel-surface-area" name="hydrogel-surface-area"/>
+                  <span class="error-message" id="hydrogel-surface-area-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="attractant-container-volume-recipe">Attractant, container volume / recipe</label>
+                  <input type="text" id="attractant-container-volume-recipe" name="attractant-container-volume-recipe"/>
+                  <span class="error-message" id="attractant-container-volume-recipe-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="first-emergence-date">First Emergence, date </label>
+                  <input
+                    type="datetime-local"
+                    id="first-emergence-date"
+                    name="first-emergence-date"
+                    format-value="yyyy-MM-ddTHH:mm"
+                  />
+                  <span class="error-message" id="first-emergence-date-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="comments">Comments</label>
+                  <input type="text" id="comments" name="comments"/>
+                  <span class="error-message" id="comments-error"></span>
+                </div>
+                <div class="card-action">
+                  <div class="success-message" id="success-message"></div>
+                  {% csrf_token %}
+                  <!-- <button class="btn btn-success" id="submit">Submit</button> -->
+                  <input id="submit" type="submit" value="Submit" />
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endblock %}
+  </body>
+
+  {% block extra_css %}
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="{%  static 'styles/form.css' %}" />
+  <link rel="stylesheet" href="{%  static 'css/bootstrap.min.css' %}" />
+  <link rel="stylesheet" href="{%  static '/css/kaiadmin.min.css' %}" />
+  <style>
+    .error-message {
+      color: red;
+    }
+
+    .success-message {
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+  {% endblock %}
+
+  {% block extra_js %}
+  <script>
+    document.getElementById("submit").addEventListener("click", validateForm);
+
+    function validateForm() {
+      const crateCodeInput = document.getElementById("crate-code");
+      const cageCodeInput = document.getElementById("cage-code");
+      const cageDateInput = document.getElementById("cage-date");
+      const cageGeometryInput = document.getElementById("cage-geometry");
+      const targetDensityInput = document.getElementById("target-density");
+      const amountOfEggisInput = document.getElementById("amount-of-eggis");
+
+      // Validation functions
+      function validateInputReceived(input, errorId) {
+        const dateTimeValue = input.value;
+        if (!dateTimeValue) {
+          document.getElementById(errorId).textContent =
+            "This is a mandatory field!";
+          return false;
+        }
+        return true;
+      }
+
+      function validateFloat(input, errorId) {
+        const value = input.value;
+        if (value && !/^\d+(\.\d+)?$/.test(value)) {
+          document.getElementById(errorId).textContent =
+            "Please enter only float numbers";
+          return false;
+        }
+        return true;
+      }
+
+      function validateInteger(input, errorId) {
+        const value = input.value;
+        if (value && /^\d+(\.\d+)?$/.test(value)) {
+          document.getElementById(errorId).textContent =
+            "Please enter only integer numbers";
+          return false;
+        }
+        return true;
+      }
+
+      const errorElements = document.querySelectorAll(".error-message");
+      for (const i = 0; i < errorElements.length; i++) {
+        errorElements[i].textContent = "";
+      }
+
+      if (
+        validateInputReceived(crateCodeInput, "crate-code-error") &&
+        validateInputReceived(crateCodeInput, "cage-code-error") &&
+        validateInputReceived(eggsCodeInput, "cage-date-error") &&
+        validateInputReceived(targetDensityInput, "target-density-error") &&
+        validateFloat(cageGeometryInput, "cage-geometry-error") &&
+        validateInteger(targetDensityInput, "target-density") &&
+        validateInteger(amountOfEggisInput, "amount-of-eggis-error")
+      ) {
+        document.getElementById("success-message").textContent =
+          "Data inserted successfully";
+
+        // Hide the success message after 3 seconds
+        setTimeout(function () {
+          document.getElementById("success-message").textContent = "";
+        }, 900000);
+
+        return true;
+      } else {
+        // Clear success message if there are errors
+        document.getElementById("success-message").textContent = "";
+        return false;
+      }
+    }
+  </script>
+    {% endblock %}
+
+</html>

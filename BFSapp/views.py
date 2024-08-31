@@ -2,7 +2,7 @@ from django.shortcuts import render , redirect ,HttpResponse, HttpResponseRedire
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from .models import EggMonitor , RearingMonitor
+from .models import EggMonitor , RearingMonitor, BreedMonitor
 from datetime import datetime
 
 # Create your views here.
@@ -218,7 +218,6 @@ def fill_rearing_monitor_form(request):
             return HttpResponse("EggMonitor instance not found :(")
 
 
-
         # Save the data to the database
         RearingMonitor.objects.create(
             crate_code=crate_code,
@@ -262,11 +261,96 @@ def fill_rearing_monitor_form(request):
     # If GET request, just render the form
     return render(request, "forms/rearingMonitorForm.html", {})
 
-def get_table1(request):
-    all_eggs_monitors = EggMonitor.objects.get_queryset()
-    return render(request, "table1.html",{})
+def fill_breeding_monitor_form(request):
+    if request.method == 'POST':
+        # Retrieve data from the POST request and handle empty strings
+        crate_code = request.POST.get('crate-code')
+        cage_code = request.POST.get('cage-code')
+        cage_date = request.POST.get('cage-date')
+        goal = request.POST.get('goal') or None
+        cage_geometry = request.POST.get('cage-geometry') or None
+        target_density = request.POST.get('target-density')
+        amount_of_eggis = request.POST.get('amount-of-eggis') or None
+        hydrogel_surface_area = request.POST.get('hydrogel-surface-area') or None
+        attractant_container_volume_recipe = request.POST.get('attractant-container-volume-recipe') or None
+        first_emergence_date = request.POST.get('first-emergence-date') or None
+        comments = request.POST.get('comments') or None
 
-def get_table1(request):
+        ##
+        try:
+            rearing_obj = RearingMonitor.objects.get(cage_code=cage_code)
+        except MyModel.DoesNotExist:
+            rearing_obj = None
+
+        if cage_geometry and target_density and rearing_obj.single_larvae_pupae_weight:
+            pupae = (float(cage_geometry) * float(target_density)) * float(rearing_obj.single_larvae_pupae_weight) / 1000
+        else:
+            pupae = None
+        ##
+
+        if first_emergence_date and cage_date:
+            date_format = "%Y-%m-%dT%H:%M"  # Adjust format to match your date string format (e.g., "2023-08-23")
+            date1 = datetime.strptime(first_emergence_date, date_format)
+            date2 = datetime.strptime(cage_date, date_format)
+
+            delta = date2 - date1
+            days_from_cage_date = delta.days
+        else:
+            days_from_cage_date = None
+
+        # Retrieve the EggMonitor instance
+        try:
+            crate_code_instance = RearingMonitor.objects.get(crate_code = int(crate_code))
+            cage_code_instance = RearingMonitor.objects.get(cage_code = int(cage_code))
+
+        except RearingMonitor.DoesNotExist:
+            crate_code_instance = None  # Handle the case where the instance does not exist
+
+            return HttpResponse("RearingMonitor instance not found :(")
+
+        print (days_from_cage_date)
+        BreedMonitor.objects.create(
+            crate_code = crate_code_instance,
+            harvest_date = crate_code_instance.harvest_date if crate_code_instance.harvest_date else None,
+            single_larvae = float(crate_code_instance.single_larvae_pupae_weight) if crate_code_instance.single_larvae_pupae_weight else None,
+            starter_date = crate_code_instance.starter_date if crate_code_instance.starter_date else None,
+            cage_code = cage_code_instance,
+            cage_date = cage_date,
+            goal = goal if goal else None,
+            cage_geometry = float(cage_geometry) if cage_geometry else None,  # Ensure eggs_code is an EggMonitor instance
+            target_density = int(target_density),
+            pupae = float(pupae) if pupae else None,
+            amount_of_eggs = int(amount_of_eggis) if amount_of_eggis else None,
+            hydrogel_surface = hydrogel_surface_area if hydrogel_surface_area else None,
+            attractant = attractant_container_volume_recipe if attractant_container_volume_recipe else None,
+            first_emergence_date = first_emergence_date if first_emergence_date else None,
+            peak_daily = None,
+            total_eggs_harvest = None,
+            avg_oviposition = None,
+            oviposition = None,
+            mg_eggs_female = None,
+            num_eggs_female = None,
+            avg_fertility = None,
+            num_clutches = None,
+            num_females = None,
+            from_hatch_to_emer_days = None,
+            days_from_cage_date = days_from_cage_date if days_from_cage_date else None,
+            days_from_egg_placement = None,
+            days_for_first_egg_from_emer = None,
+            comments=comments
+        )
+
+        # Redirect to a success page or return a success message
+        # return HttpResponse("Data inserted successfully")
+
+    # If GET request, just render the form
+    return render(request, "forms/breedingMonitorForm.html", {})
+
+def get_egg_monitor_table(request):
+    all_eggs_monitors = EggMonitor.objects.get_queryset()
+    return render(request, "tables/eggMonitorTable.html",{})
+
+def get_egg_monitor_table(request):
     # Fetch all records from the EggMonitor model
     all_eggs_monitors = EggMonitor.objects.all()
     data = []
@@ -305,41 +389,103 @@ def get_table1(request):
         data.append(row_dict)
 
     # Render the data in the template
-    return render(request, 'table1.html', {'data_from_server': data})
+    return render(request, 'tables/eggMonitorTable.html', {'data_from_server': data})
 
-def filter_view(request):
-    # Handle user input for filtering
-    filter_option = request.GET.get('filter_option', '')  # Get the selected filter option from the query string
-    
-    queryset = []
+def get_rearing_monitor_table(request):
+    all_rearing_monitors = RearingMonitor.objects.get_queryset()
+    return render(request, "tables/rearingMonitorTable.html",{})
 
-    # Apply filtering based on the selected option
-    if filter_option == 'cycle':
-        queryset = Measurement.objects.filter(cycle=request.GET.get('filter_text'))
-    elif filter_option == 'diet':
-        queryset = Measurement.objects.filter(diet=request.GET.get('filter_text'))
-    elif filter_option == 'temperature':
-        queryset = Measurement.objects.filter(temperature=request.GET.get('filter_text'))
-    elif filter_option == 'date':
-        queryset = Measurement.objects.filter(date=request.GET.get('filter_text'))
-    elif filter_option == 'larvae_weight':
-        queryset = Measurement.objects.filter(larvae_weight=request.GET.get('filter_text'))
-    else:
-        queryset = Measurement.objects.all()
-
+def get_rearing_monitor_table(request):
+    # Fetch all records from the EggMonitor model
+    all_rearing_monitors = RearingMonitor.objects.all()
     data = []
 
-    if queryset.__len__() > 0:
-        for item in queryset:
-            row_dict = {
-                'col1': item.cycle,
-                'col2': item.diet,
-                'col3': item.date,
-                'col4': item.temperature,
-                'col5': item.larvae_weight,
-                'col6': item.before_dry,
-                'col7': item.after_dry,
-            }
-            data.append(row_dict)
+    for item in all_rearing_monitors:
+        # Create a dictionary for each row, mapping your model fields to table columns
+        row_dict = {
+            'col1': item.crate_code,
+            'col2': item.consortium_entoprotech_breeding,
+            'col3': item.cycle,
+            'col4': item.box,
+            'col5': item.goal,
+            'col6': item.eggs_code,
+            'col7': item.starter_date,
+            'col8': item.starter_size,
+            'col9': item.starter_diet,
+            'col10': item.length_measure_date,
+            'col11': item.average_length,
+            'col12': item.starter_age,
+            'col13': item.cooking_date,
+            'col14': item.diet_type,
+            'col15': item.measure_date,
+            'col16': item.temperature,
+            'col17': item.total_larvae_weight,
+            'col18': item.number_of_larvae_sampled,
+            'col19': item.single_larva_weight,
+            'col20': item.pupation_percentage,
+            'col21': item.substrate_before_drying,
+            'col22': item.substrate_after_drying,
+            'col23': item.harvest_date,
+            'col24': item.days_from_laying,
+            'col25': item.days_from_cooking,
+            'col26': item.total_pupae_larvae_weight,
+            'col27': item.larvae_pupae_weight,
+            'col28': item.number_of_larvae_pupae_sampled,
+            'col29': item.single_larvae_pupae_weight,
+            'col30': item.total_larvae_count,
+            'col31': item.survival_percentage,
+            'col32': item.cage_code,
+            'col33': item.comments,
+        }
+        # Append the row dictionary to the data list
+        data.append(row_dict)
 
-    return render(request, 'filter.html', {'data_from_server': data})
+    # Render the data in the template
+    return render(request, 'tables/rearingMonitorTable.html', {'data_from_server': data})
+
+def get_breeding_monitor_table(request):
+    console.log("#######################")
+    all_breeding_monitors = BreedMonitor.objects.get_queryset()
+    return render(request, "tables/breedingMonitorTable.html",{})
+
+def get_breeding_monitor_table(request):
+    all_breeding_monitors = BreedMonitor.objects.all()
+    data = []
+
+    for item in all_breeding_monitors:
+        # Create a dictionary for each row, mapping your model fields to table columns
+        row_dict = {
+            'col1': item.crate_code,  # crate_code
+            'col2': item.harvest_date,  # harvest_date
+            'col3': item.single_larvae,  # single_larvae
+            'col4': item.starter_date,  # starter_date
+            'col5': item.cage_code,  # cage_code
+            'col6': item.cage_date,  # cage_date
+            'col7': item.goal,  # goal
+            'col8': item.cage_geometry,  # cage_geometry
+            'col9': item.target_density,  # target_density
+            'col10': item.pupae,  # pupae
+            'col11': item.amount_of_eggs,  # amount_of_eggs
+            'col12': item.hydrogel_surface,  # hydrogel_surface
+            'col13': item.attractant,  # attractant
+            'col14': item.first_emergence_date,  # first_emergence_date
+            'col15': item.peak_daily,  # peak_daily
+            'col16': item.total_eggs_harvest,  # total_eggs_harvest
+            'col17': item.avg_oviposition,  # avg_oviposition
+            'col18': item.oviposition,  # oviposition
+            'col19': item.mg_eggs_female,  # mg_eggs_female
+            'col20': item.num_eggs_female,  # num_eggs_female
+            'col21': item.avg_fertility,  # avg_fertility
+            'col22': item.num_clutches,  # num_clutches
+            'col23': item.num_females,  # num_females
+            'col24': item.from_hatch_to_emer_days,  # from_hatch_to_emer_days
+            'col25': item.days_from_cage_date,  # days_from_cage_date
+            'col26': item.days_from_egg_placement,  # days_from_egg_placement
+            'col27': item.days_for_first_egg_from_emer,  # days_for_first_egg_from_emer
+            'col28': item.comments,  # comments
+        }
+        # Append the row dictionary to the data list
+        data.append(row_dict)
+
+    # Render the data in the template
+    return render(request, 'tables/breedingMonitorTable.html', {'data_from_server': data})
