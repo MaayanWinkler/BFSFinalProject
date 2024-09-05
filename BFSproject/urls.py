@@ -30,4 +30,5 @@ urlpatterns = [
     path("tables/eggMonitorTable", views.get_egg_monitor_table, name="get_egg_monitor_table"),
     path("tables/rearingMonitorTable", views.get_rearing_monitor_table, name="get_rearing_monitor_table"),
     path("tables/breedingMonitorTable", views.get_breeding_monitor_table, name="get_breeding_monitor_table"),
+    path("predict/", views.predict_view, name="predict"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
