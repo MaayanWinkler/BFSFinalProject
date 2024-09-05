@@ -4,7 +4,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from .models import EggMonitor , RearingMonitor, BreedMonitor
 from datetime import datetime
-
+import joblib
+import numpy as np
+from .forms import PredictionForm  # Import the form from forms.py
 # Create your views here.
  
 def user_login(request):
@@ -489,3 +491,32 @@ def get_breeding_monitor_table(request):
 
     # Render the data in the template
     return render(request, 'tables/breedingMonitorTable.html', {'data_from_server': data})
+# Load the trained model
+model = joblib.load('random_forest_model.pkl')  # Ensure the path to the model file is correct
+
+
+def predict_view(request):
+    if request.method == 'POST':
+        form = PredictionForm(request.POST)
+        if form.is_valid():
+            # Get form data
+            temperature = form.cleaned_data['temperature']
+            humidity = form.cleaned_data['humidity']
+            larvae_weight = form.cleaned_data['larvae_weight']
+            num_of_pupae = form.cleaned_data['num_of_pupae']
+            substrate_before_drying = form.cleaned_data['substrate_before_drying']
+            substrate_after_drying = form.cleaned_data['substrate_after_drying']
+
+            # Prepare data for prediction
+            input_data = np.array(
+                [[temperature, humidity, larvae_weight, num_of_pupae, substrate_before_drying, substrate_after_drying]])
+
+            # Make prediction using the loaded model
+            prediction = model.predict(input_data)[0]
+
+            # Return the prediction result
+            return render(request, 'predictions/result.html', {'prediction': prediction})
+    else:
+        form = PredictionForm()
+
+    return render(request, 'predictions/predict.html', {'form': form})
