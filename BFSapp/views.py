@@ -1,4 +1,4 @@
-from django.shortcuts import render , redirect ,HttpResponse, HttpResponseRedirect
+from django.shortcuts import render , redirect ,HttpResponse, HttpResponseRedirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -6,6 +6,7 @@ from .models import EggMonitor , RearingMonitor, BreedMonitor
 from datetime import datetime
 from django.apps import apps
 import numpy as np 
+from .forms import EggMonitorForm  # Assume you have a ModelForm for EggMonitor
 
 # Create your views here.
 def index(request):
@@ -473,7 +474,6 @@ def get_rearing_monitor_table(request):
     return render(request, 'tables/rearingMonitorTable.html', {'data_from_server': data})
 
 def get_breeding_monitor_table(request):
-    console.log("#######################")
     all_breeding_monitors = BreedMonitor.objects.get_queryset()
     return render(request, "tables/breedingMonitorTable.html",{})
 
@@ -518,3 +518,25 @@ def get_breeding_monitor_table(request):
 
     # Render the data in the template
     return render(request, 'tables/breedingMonitorTable.html', {'data_from_server': data})
+
+def edit_egg_monitor(request, id):
+    egg_monitor = get_object_or_404(EggMonitor, eggs_code=id)
+    if request.method == 'POST':
+        form = EggMonitorForm(request.POST, instance=egg_monitor)
+        if form.is_valid():
+            form.save()
+            return redirect('get_egg_monitor_table')
+    else:
+        form = EggMonitorForm(instance=egg_monitor)
+    return render(request, 'edit_egg_monitor.html', {'form': form})
+
+def delete_egg_monitor(request, id):
+    egg_monitor = get_object_or_404(EggMonitor, eggs_code=id)
+    if request.method == 'POST':
+        egg_monitor.delete()
+        return redirect('get_egg_monitor_table')
+
+def egg_monitor_list(request):
+    data_from_server = EggMonitor.objects.all()
+    print('fffaf')
+    return render(request, 'tables/eggMonitorTable.html', {'data_from_server': data_from_server})

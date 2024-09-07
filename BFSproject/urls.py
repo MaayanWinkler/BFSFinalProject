@@ -29,4 +29,6 @@ urlpatterns = [
     path("tables/eggMonitorTable", views.get_egg_monitor_table, name="get_egg_monitor_table"),
     path("tables/rearingMonitorTable", views.get_rearing_monitor_table, name="get_rearing_monitor_table"),
     path("tables/breedingMonitorTable", views.get_breeding_monitor_table, name="get_breeding_monitor_table"),
+    path('eggMonitorTable/edit/<str:id>/', views.edit_egg_monitor, name='edit_record'),
+    path('eggMonitorTable/delete/<str:id>/', views.delete_egg_monitor, name='delete_record'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
