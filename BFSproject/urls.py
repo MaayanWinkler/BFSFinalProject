@@ -23,7 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", views.user_login, name="user_login"),
     path("index", views.index, name="index"),
-    path("check_user/", views.check_user, name="check_user"),
     path("forms/eggsMonitorForm", views.fill_eggs_monitor_form, name="fill_eggs_monitor_form"),
     path("forms/rearingMonitorForm", views.fill_rearing_monitor_form, name="fill_rearing_monitor_form"),
     path("forms/breedingMonitorForm", views.fill_breeding_monitor_form, name="fill_breeding_monitor_form"),

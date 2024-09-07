@@ -4,9 +4,13 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from .models import EggMonitor , RearingMonitor, BreedMonitor
 from datetime import datetime
+from django.apps import apps
+import numpy as np 
 
 # Create your views here.
- 
+def index(request):
+    return render(request, "index.html", {"name": request.POST.get("username")})
+
 def user_login(request):
     context = {}
     if request.POST:
@@ -26,31 +30,28 @@ def user_login(request):
             print("ERROR")
     return render(request, "login.html", context)
 
-def index(request):
-    return render(request, "index.html", {"name": request.POST.get("username")})
 
-def check_user(request):
-    print("*******************************************************")
-    if request.method == "POST":
-        if check_parameters(request.POST.get("email"), request.POST.get("password")):
-            return render(request, "index.html", {"name": request.POST.get("username")})
-        else:
-            return render(request, "login.html",{})
+def retrieve_items_from_db(model, filters):
+    ModelClass = apps.get_model('BFSapp', model)
+    items = ModelClass.objects.filter(**filters)
+
+    return items
+
 
 def fill_eggs_monitor_form(request):
+    context = {}
     if request.method == 'POST':
-        # Retrieve data from the POST request and handle empty strings
         date_measure = request.POST.get('dateTime')
         cage_code = request.POST.get('cageCode')
         eggs_code = request.POST.get('eggsCode')
         
-        egg_weight_1 = request.POST.get('weightEgg1') or None
-        egg_weight_2 = request.POST.get('weightEgg2') or None
-        egg_weight_3 = request.POST.get('weightEgg3') or None
+        egg_weight_1 = float(request.POST.get('weightEgg1')) or None
+        egg_weight_2 = float(request.POST.get('weightEgg2')) or None
+        egg_weight_3 = float(request.POST.get('weightEgg3')) or None
         
-        num_eggs_1 = request.POST.get('numberEggs1') or None
-        num_eggs_2 = request.POST.get('numberEggs2') or None
-        num_eggs_3 = request.POST.get('numberEggs3') or None
+        num_eggs_1 = float(request.POST.get('numberEggs1')) or None
+        num_eggs_2 = float(request.POST.get('numberEggs2')) or None
+        num_eggs_3 = float(request.POST.get('numberEggs3')) or None
         
         total_eggs_weight = request.POST.get('total_eggs_weight') or None
         
@@ -62,33 +63,58 @@ def fill_eggs_monitor_form(request):
         infertile_eggs_2 = request.POST.get('numberInfertileEggs2') or None
         infertile_eggs_3 = request.POST.get('numberInfertileEggs3') or None
         
-        target_density = request.POST.get('targetDensity') or None
+        target_density = float(request.POST.get('targetDensity')) or None
         incubation_temp = request.POST.get('incubationTemp') or None
         incubation_tube = request.POST.get('incubationTube') or None
+
+        comments = request.POST.get('comments') or "No comments"
         
-        # Calculating additional fields only if necessary
+        filters = {
+            'eggs_code': eggs_code,
+        }
+        items = retrieve_items_from_db('EggMonitor', filters)
+        print(items)
+        if (items.count() > 0):
+            context = {
+                "msg": 'There is already a record with this Egg Code.',
+            }
+            print(context)
+            return render(request, "forms/eggsMonitorForm.html", context)
+
+        # Calculating K:
         if egg_weight_1 and egg_weight_2 and egg_weight_3:
-            avg_single_weight = (float(egg_weight_1) + float(egg_weight_2) + float(egg_weight_3)) / 3
+            avg_single_weight = (float(egg_weight_1)/float(num_eggs_1) +float(egg_weight_2)/float(num_eggs_2) + float(egg_weight_3)/float(num_eggs_3)) / 3
         else:
             avg_single_weight = None
 
         rsd_single_weight = 0.0  # Assuming 0.0 for now; adjust if needed
 
+        # Calculating U:
         if num_eggs_1 and num_eggs_2 and num_eggs_3 and fertile_eggs_1 and fertile_eggs_2 and fertile_eggs_3:
-            fertelity_percentage = (
-                (int(fertile_eggs_1) + int(fertile_eggs_2) + int(fertile_eggs_3))
-                / (int(num_eggs_1) + int(num_eggs_2) + int(num_eggs_3))
-            ) * 100
+            ratios= [egg_weight_1 / num_eggs_1, egg_weight_2 / num_eggs_2, egg_weight_3 / num_eggs_3]
+            population_std = np.std(ratios)
+            fertelity_percentage = (population_std/ avg_single_weight) * 100
         else:
             fertelity_percentage = None
 
+        # if num_eggs_1 and num_eggs_2 and num_eggs_3 and fertile_eggs_1 and fertile_eggs_2 and fertile_eggs_3:
+        #     fertelity_percentage = (
+        #         (int(fertile_eggs_1) + int(fertile_eggs_2) + int(fertile_eggs_3))
+        #         / (int(num_eggs_1) + int(num_eggs_2) + int(num_eggs_3))
+        #     ) * 100
+        # else:
+        #     fertelity_percentage = None
+
         rsd_fertelity_percentage = 0.0  # Assuming 0.0 for now; adjust if needed
 
-        amount_of_added_eggs = 0.0  # Set this based on your logic
-        comments = "No comments"  # You can retrieve this from a form field if necessary
-
+        # Calculating X:
+        if target_density and fertelity_percentage and avg_single_weight:
+            amount_of_added_eggs = (target_density / fertelity_percentage) * avg_single_weight
+        else:
+            amount_of_added_eggs = None
+        
         # Save the data to the database
-        EggMonitor.objects.create(
+        egg = EggMonitor.objects.create(
             date_measure=date_measure,
             passed_hours=0.0,  # Set this based on your logic
             cage_code=cage_code,
@@ -102,7 +128,7 @@ def fill_eggs_monitor_form(request):
             avg_single_weight=avg_single_weight,
             rsd_single_weight=rsd_single_weight,
             total_eggs_weight=int(total_eggs_weight) if total_eggs_weight else None,
-            added_eggs=amount_of_added_eggs,
+            added_eggs=int(amount_of_added_eggs) if amount_of_added_eggs else None,
             fertile_eggs_1=int(fertile_eggs_1) if fertile_eggs_1 else None,
             fertile_eggs_2=int(fertile_eggs_2) if fertile_eggs_2 else None,
             fertile_eggs_3=int(fertile_eggs_3) if fertile_eggs_3 else None,
@@ -112,17 +138,20 @@ def fill_eggs_monitor_form(request):
             fertelity_percentage=fertelity_percentage,
             rsd_fertelity_percentage=rsd_fertelity_percentage,
             target_density=int(target_density) if target_density else None,
-            amount_of_added_eggs=amount_of_added_eggs,
+            amount_of_added_eggs=int(amount_of_added_eggs) if amount_of_added_eggs else None,
             incubation_temp=incubation_temp,
             incubation_tube=incubation_tube,
             comments=comments
         )
 
-        # Redirect to a success page or return a success message
-        # return HttpResponse("Data inserted successfully")
+        print(egg)
+        if egg:
+            context = {
+                "msg": 'Record saved successfully!',
+            }
 
     # If GET request, just render the form
-    return render(request, "forms/eggsMonitorForm.html", {})
+    return render(request, "forms/eggsMonitorForm.html", context)
 
 def fill_rearing_monitor_form(request):
     if request.method == 'POST':

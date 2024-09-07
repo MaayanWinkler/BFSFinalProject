@@ -167,19 +167,23 @@
                   />
                   <span class="error-message" id="incubation-tube-error"></span>
                 </div>
-                <label for="comments">Comments</label>
-                <input
-                  type="text"
-                  id="comments"
-                  name="comments"
-                />
-                <span class="error-message" id="comments-error"></span>
-              </div>
+                <div class="form-group">
+                  <label for="comments">Comments</label>
+                  <input
+                    type="text"
+                    id="comments"
+                    name="comments"
+                  />
+                  <span class="error-message" id="comments-error"></span>
+               </div>
                 <div class="card-action">
                   <div class="success-message" id="success-message"></div>
                   {% csrf_token %}
-                  <!-- <button class="btn btn-success" id="submit">Submit</button> -->
-                  <input id="submit" type="submit" value="Submit" />
+                  {% if msg %}
+                    <a class="msg">{{ msg }}</a>
+                    <p></p>
+                  {% endif %}
+                <input id="submit" type="submit" value="Submit" />
                 </div>
               </form>
             </div>

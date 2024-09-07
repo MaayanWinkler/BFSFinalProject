@@ -10,20 +10,23 @@
     <div class="log-form">
       <h2>Login to your acount</h2>
       <!-- action="{% url 'user_login' %}" -->
-      <form class = 'login' , name="Login BFS Project", method="post">
+      <form class="login" , name="Login BFS Project" , method="post">
         <input type="text" name="email" id="email" placeholder="Email" />
-        <input type="password" name="password" id="password" placeholder="Password" />
-        <!-- <form action="{% url 'check_user' %}" method="get"> -->
-          {% csrf_token %}
-          {% if error %}
-          <a class="error">{{ error }}</a><p></p>
-          <button type="submit" class="btn" >Login</button> 
-          
-          {% else %}
-          <button type="submit" class="btn" >Login</button> 
-          
-          {% endif %}
-        <!-- </form> -->
+        <input
+          type="password"
+          name="password"
+          id="password"
+          placeholder="Password"
+        />
+        {% csrf_token %} {% if error %}
+        <a class="error">{{ error }}</a>
+        <p></p>
+        <button type="submit" class="btn">Login</button>
+
+        {% else %}
+        <button type="submit" class="btn">Login</button>
+
+        {% endif %}
       </form>
     </div>
   </body>
