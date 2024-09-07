@@ -39,6 +39,7 @@ def retrieve_items_from_db(model, filters):
 
 
 def fill_eggs_monitor_form(request):
+    # Hi im maayan!
     context = {}
     if request.method == 'POST':
         date_measure = request.POST.get('dateTime')
