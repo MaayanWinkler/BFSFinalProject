@@ -215,51 +215,70 @@ def fill_rearing_monitor_form(request):
         cage_code = request.POST.get('cageCode') or None
 
         # Calculating additional fields only if necessary
+        # Calculating N
         if starter_date and length_measure_date:
             date_format = "%Y-%m-%dT%H:%M"  # Adjust format to match your date string format (e.g., "2023-08-23")
             date1 = datetime.strptime(starter_date, date_format)
             date2 = datetime.strptime(length_measure_date, date_format)
 
             delta = date2 - date1
-            starter_age = delta.days
+            total_days = delta.days
+            total_hours = delta.total_seconds() / 3600  # Convert total seconds to hours
+            days_with_hours = total_hours / 24
+            starter_age =days_with_hours
         else:
             starter_age = None
 
+        
+        # Calculating V
         if total_larvae_weight and number_of_larvae_sampled:
             single_larva_weight = (float(total_larvae_weight) / float(number_of_larvae_sampled))
         else:
             single_larva_weight = None
 
-        if harvest_date and starter_date:
-            date_format = "%Y-%m-%dT%H:%M"  # Adjust format to match your date string format (e.g., "2023-08-23")
-            date1 = datetime.strptime(harvest_date, date_format)
-            date2 = datetime.strptime(starter_date, date_format)
 
-            delta = date2 - date1
-            days_from_laying = delta.days
+        # Calculating AA
+        if harvest_date and starter_date:
+            date_format = "%Y-%m-%dT%H:%M" # Adjust format to match your date string format (e.g., "2023-08-23")
+            dateA = datetime.strptime(harvest_date, date_format)
+            dateB = datetime.strptime(starter_date, date_format)
+
+            deltaa = dateA - dateB
+            total_daysA = deltaa.days
+            total_hoursA = deltaa.total_seconds() / 3600  # Convert total seconds to hours
+            days_with_hoursA = total_hoursA / 24
+            days_from_laying =days_with_hoursA
         else:
             days_from_laying = None
 
+        # Calculating AB
         if harvest_date and cooking_date:
             date_format = "%Y-%m-%dT%H:%M"  # Adjust format to match your date string format (e.g., "2023-08-23")
             date1 = datetime.strptime(harvest_date, date_format)
             date2 = datetime.strptime(cooking_date, date_format)
 
-            delta = date2 - date1
-            days_from_cooking = delta.days
+            delta = date1 - date2
+            total_days = delta.days
+            total_hours = delta.total_seconds() / 3600  # Convert total seconds to hours
+            days_with_hours = total_hours / 24
+            days_from_cooking =days_with_hours
         else:
             days_from_cooking = None
+
 
         if larvae_weight and number_of_larvae_pupae_sampled:
             single_larvae_pupae_weight = 1000 * (float(larvae_weight) / float(number_of_larvae_pupae_sampled))
         else:
             single_larvae_pupae_weight = None
         
+
+        # Calculating AG
         if total_pupae_weight and single_larvae_pupae_weight:
-            total_larvae_count = (float(larvae_weight) / (float(number_of_larvae_pupae_sampled) / 1000000 ))
+            total_larvae_count = (float(total_pupae_weight) / ((float(single_larvae_pupae_weight) / 1000000 )))
         else:
             total_larvae_count = None
 
+        # Calculating 
         if total_larvae_count:
             survival_percentage = 100 * (float(total_larvae_count) / 8000)
         else:
@@ -271,7 +290,7 @@ def fill_rearing_monitor_form(request):
 
         # Retrieve the EggMonitor instance
         try:
-            eggs_code_instance = EggMonitor.objects.get(eggs_code = int(eggs_code))
+            eggs_code_instance = EggMonitor.objects.get(eggs_code = eggs_code)
         except EggMonitor.DoesNotExist:
             eggs_code_instance = None  # Handle the case where the instance does not exist
             return HttpResponse("EggMonitor instance not found :(")
