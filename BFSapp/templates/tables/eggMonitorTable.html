@@ -132,6 +132,12 @@
                       {% endfor %}
                     </tbody>
                   </table>
+                  <div style="margin-left: 0.6%;">
+                    <a href="{% url 'export_to_excel' 'EggMonitor' %}" class="btn btn-primary">
+                      <img src="{% static 'img/excel-logo.jpg' %}" alt="Export to Excel" style="width: 40px; height: 40px;">
+                      Export
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>

@@ -2,10 +2,12 @@ from django.shortcuts import render , redirect ,HttpResponse, HttpResponseRedire
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.utils.timezone import is_aware
 from .models import EggMonitor , RearingMonitor, BreedMonitor
 from datetime import datetime
 from django.apps import apps
 import numpy as np 
+import pandas as pd
 from .forms import EggMonitorForm  # Assume you have a ModelForm for EggMonitor
 
 # Create your views here.
@@ -567,3 +569,36 @@ def egg_monitor_list(request):
     data_from_server = EggMonitor.objects.all()
     print('fffaf')
     return render(request, 'tables/eggMonitorTable.html', {'data_from_server': data_from_server})
+
+
+def export_to_excel(request, model_name):
+    try:
+        # Dynamically get the model using the model name
+        model = apps.get_model('BFSapp', model_name)
+    except LookupError:
+        return HttpResponse("Model not found.", status=404)
+
+    # Query all records from the model
+    records = model.objects.all().values()
+
+    # Convert records to a list of dictionaries
+    records_list = list(records)
+
+    # Convert any timezone-aware datetimes to naive datetimes
+    for record in records_list:
+        for field, value in record.items():
+            if isinstance(value, datetime) and is_aware(value):
+                record[field] = value.astimezone(None).replace(tzinfo=None)
+
+    # Convert list of dictionaries to a DataFrame
+    df = pd.DataFrame(records_list)
+
+    # Create an HTTP response with Excel file
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f'attachment; filename={model_name}_data.xlsx'
+
+    # Write DataFrame to Excel
+    with pd.ExcelWriter(response, engine='openpyxl') as writer:
+        df.to_excel(writer, sheet_name=model_name, index=False)
+
+    return response
