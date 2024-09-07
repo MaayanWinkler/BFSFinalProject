@@ -88,13 +88,33 @@ def fill_eggs_monitor_form(request):
         else:
             avg_single_weight = None
 
-        rsd_single_weight = 0.0  # Assuming 0.0 for now; adjust if needed
+        # Calculating L:
+        if egg_weight_1 != "":
+            ratio1 = egg_weight_1 / num_eggs_1
+            ratio2 = egg_weight_2 / num_eggs_2
+            ratio3 = egg_weight_3 / num_eggs_3
+
+            stdev = np.std([ratio1, ratio2, ratio3], ddof=0)
+            rsd_single_weight = stdev / avg_single_weight
+        else:
+            rsd_single_weight = None
+
+
+        # Calculating N:
+        calc= 0.025 * float(total_eggs_weight)
+        if calc > 0:
+            added_eggs = calc
+        else:
+            added_eggs = None
+
 
         # Calculating U:
-        if num_eggs_1 and num_eggs_2 and num_eggs_3 and fertile_eggs_1 and fertile_eggs_2 and fertile_eggs_3:
-            ratios= [egg_weight_1 / num_eggs_1, egg_weight_2 / num_eggs_2, egg_weight_3 / num_eggs_3]
-            population_std = np.std(ratios)
-            fertelity_percentage = (population_std/ avg_single_weight) * 100
+        if infertile_eggs_1 and infertile_eggs_2 and infertile_eggs_3 and fertile_eggs_1 and fertile_eggs_2 and fertile_eggs_3:
+            ratios1 = float(fertile_eggs_1) / (float(fertile_eggs_1) + float(infertile_eggs_1))
+            ratios2 = float(fertile_eggs_2) / (float(fertile_eggs_2) + float(infertile_eggs_2))
+            ratios3 = float(fertile_eggs_3) / (float(fertile_eggs_3) + float(infertile_eggs_3))
+            average_ratio = (ratios1 + ratios2 + ratios3) / 3
+            fertelity_percentage = average_ratio
         else:
             fertelity_percentage = None
 
@@ -106,11 +126,17 @@ def fill_eggs_monitor_form(request):
         # else:
         #     fertelity_percentage = None
 
-        rsd_fertelity_percentage = 0.0  # Assuming 0.0 for now; adjust if needed
+        # Calculating V:
+        if infertile_eggs_1 and infertile_eggs_2 and infertile_eggs_3 and fertile_eggs_1 and fertile_eggs_2 and fertile_eggs_3:
+            stdv = np.std([ratios1, ratios2, ratios3], ddof=1) 
+            rsd_fertelity_percentage = stdv / fertelity_percentage
+        else:
+            rsd_fertelity_percentage = None
+
 
         # Calculating X:
         if target_density and fertelity_percentage and avg_single_weight:
-            amount_of_added_eggs = (target_density / fertelity_percentage) * avg_single_weight
+            amount_of_added_eggs = float((target_density / fertelity_percentage) * avg_single_weight)
         else:
             amount_of_added_eggs = None
         
@@ -129,7 +155,7 @@ def fill_eggs_monitor_form(request):
             avg_single_weight=avg_single_weight,
             rsd_single_weight=rsd_single_weight,
             total_eggs_weight=int(total_eggs_weight) if total_eggs_weight else None,
-            added_eggs=int(amount_of_added_eggs) if amount_of_added_eggs else None,
+            added_eggs=float(added_eggs) if added_eggs else None,
             fertile_eggs_1=int(fertile_eggs_1) if fertile_eggs_1 else None,
             fertile_eggs_2=int(fertile_eggs_2) if fertile_eggs_2 else None,
             fertile_eggs_3=int(fertile_eggs_3) if fertile_eggs_3 else None,
