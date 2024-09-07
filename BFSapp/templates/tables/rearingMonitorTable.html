@@ -33,9 +33,9 @@
                         <th>Box</th>
                         <th>Goal</th>
                         <th>Eggs code</th>
-                        <!-- <th>Average single egg weight (mg)</th> -->
-                        <!-- <th>% fertility</th> -->
-                        <!-- <th>Target density</th> -->
+                        <th>Average single egg weight (mg)</th>
+                        <th>% fertility</th>
+                        <th>Target density</th>
                         <th>Starter Date</th>
                         <th>Starter Size (g)</th>
                         <th>Starter diet</th>
@@ -162,6 +162,12 @@
                       {% endfor %}
                     </tbody>
                   </table>
+                  <div style="margin-left: 0.6%;">
+                    <a href="{% url 'export_to_excel' 'RearingMonitor' %}" class="btn btn-primary">
+                      <img src="{% static 'img/excel-logo.jpg' %}" alt="Export to Excel" style="width: 40px; height: 40px;">
+                      Export
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
