@@ -171,7 +171,7 @@ def fill_eggs_monitor_form(request):
             amount_of_added_eggs=int(amount_of_added_eggs) if amount_of_added_eggs else None,
             incubation_temp=incubation_temp,
             incubation_tube=incubation_tube,
-            comments=comments
+            comments = request.POST.get('comments') or "No comments"
         )
 
         print(egg)
@@ -213,6 +213,8 @@ def fill_rearing_monitor_form(request):
         larvae_weight = request.POST.get('larvaeWeight') or None
         number_of_larvae_pupae_sampled = request.POST.get('numberOfLarvaePupaeSampled') or None
         cage_code = request.POST.get('cageCode') or None
+        comments = request.POST.get('comments') or "No comments"
+
 
         # Calculating additional fields only if necessary
         # Calculating N
@@ -285,7 +287,6 @@ def fill_rearing_monitor_form(request):
             survival_percentage = None
         
 
-        comments = "No comments"  # You can retrieve this from a form field if necessary
 
 
         # Retrieve the EggMonitor instance
