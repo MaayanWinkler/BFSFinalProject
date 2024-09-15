@@ -1,0 +1,48 @@
+/* Styles for the action headers */
+.action-header {
+  background-color: #f0f0f0; /* Example background color */
+  text-align: center;
+  /* Add more styles as needed */
+}
+
+/* Styles for the action columns */
+.action-column {
+  width: 80px; /* Adjust width as needed */
+  text-align: center;
+  /* Override other table styles if necessary */
+}
+
+/* Specific styles for Edit buttons */
+.btn-edit {
+  background-color: #4caf50; /* Green */
+  color: white;
+  padding: 5px 10px;
+  text-decoration: none;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.btn-edit:hover {
+  background-color: #45a049;
+}
+
+/* Specific styles for Delete buttons */
+.btn-delete {
+  background-color: #f44336; /* Red */
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.btn-delete:hover {
+  background-color: #da190b;
+}
+
+/* Optional: Remove table-specific padding/margin for action columns */
+.edit-column,
+.delete-column {
+  padding: 0; /* Remove padding */
+}

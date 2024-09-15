@@ -1,14 +1,24 @@
-from django.shortcuts import render , redirect ,HttpResponse, HttpResponseRedirect
+from django.shortcuts import render , redirect ,HttpResponse, HttpResponseRedirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.utils.timezone import is_aware
 from .models import EggMonitor , RearingMonitor, BreedMonitor
 from datetime import datetime
-import joblib
+from django.apps import apps
 import numpy as np
+import pandas as pd
+from .forms import EggMonitorForm  # Assume you have a ModelForm for EggMonitor
+from django.conf import settings
+import os
+import pickle
+import joblib
 from .forms import PredictionForm  # Import the form from forms.py
+from django.conf import settings
 # Create your views here.
- 
+def index(request):
+    return render(request, "index.html", {"name": request.POST.get("username")})
+
 def user_login(request):
     context = {}
     if request.POST:
@@ -28,31 +38,29 @@ def user_login(request):
             print("ERROR")
     return render(request, "login.html", context)
 
-def index(request):
-    return render(request, "index.html", {"name": request.POST.get("username")})
 
-def check_user(request):
-    print("*******************************************************")
-    if request.method == "POST":
-        if check_parameters(request.POST.get("email"), request.POST.get("password")):
-            return render(request, "index.html", {"name": request.POST.get("username")})
-        else:
-            return render(request, "login.html",{})
+def retrieve_items_from_db(model, filters):
+    ModelClass = apps.get_model('BFSapp', model)
+    items = ModelClass.objects.filter(**filters)
+
+    return items
+
 
 def fill_eggs_monitor_form(request):
+    # Hi im maayan!
+    context = {}
     if request.method == 'POST':
-        # Retrieve data from the POST request and handle empty strings
         date_measure = request.POST.get('dateTime')
         cage_code = request.POST.get('cageCode')
         eggs_code = request.POST.get('eggsCode')
         
-        egg_weight_1 = request.POST.get('weightEgg1') or None
-        egg_weight_2 = request.POST.get('weightEgg2') or None
-        egg_weight_3 = request.POST.get('weightEgg3') or None
+        egg_weight_1 = float(request.POST.get('weightEgg1')) or None
+        egg_weight_2 = float(request.POST.get('weightEgg2')) or None
+        egg_weight_3 = float(request.POST.get('weightEgg3')) or None
         
-        num_eggs_1 = request.POST.get('numberEggs1') or None
-        num_eggs_2 = request.POST.get('numberEggs2') or None
-        num_eggs_3 = request.POST.get('numberEggs3') or None
+        num_eggs_1 = float(request.POST.get('numberEggs1')) or None
+        num_eggs_2 = float(request.POST.get('numberEggs2')) or None
+        num_eggs_3 = float(request.POST.get('numberEggs3')) or None
         
         total_eggs_weight = request.POST.get('total_eggs_weight') or None
         
@@ -64,33 +72,84 @@ def fill_eggs_monitor_form(request):
         infertile_eggs_2 = request.POST.get('numberInfertileEggs2') or None
         infertile_eggs_3 = request.POST.get('numberInfertileEggs3') or None
         
-        target_density = request.POST.get('targetDensity') or None
+        target_density = float(request.POST.get('targetDensity')) or None
         incubation_temp = request.POST.get('incubationTemp') or None
         incubation_tube = request.POST.get('incubationTube') or None
-        
-        # Calculating additional fields only if necessary
+
+        comments = request.POST.get('comments') or "No comments"
+
+        filters = {
+            'eggs_code': eggs_code,
+        }
+        items = retrieve_items_from_db('EggMonitor', filters)
+        print(items)
+        if (items.count() > 0):
+            context = {
+                "msg": 'There is already a record with this Egg Code.',
+            }
+            print(context)
+            return render(request, "forms/eggsMonitorForm.html", context)
+
+        # Calculating K:
         if egg_weight_1 and egg_weight_2 and egg_weight_3:
-            avg_single_weight = (float(egg_weight_1) + float(egg_weight_2) + float(egg_weight_3)) / 3
+            avg_single_weight = (float(egg_weight_1)/float(num_eggs_1) +float(egg_weight_2)/float(num_eggs_2) + float(egg_weight_3)/float(num_eggs_3)) / 3
         else:
             avg_single_weight = None
 
-        rsd_single_weight = 0.0  # Assuming 0.0 for now; adjust if needed
+        # Calculating L:
+        if egg_weight_1 != "":
+            ratio1 = egg_weight_1 / num_eggs_1
+            ratio2 = egg_weight_2 / num_eggs_2
+            ratio3 = egg_weight_3 / num_eggs_3
 
-        if num_eggs_1 and num_eggs_2 and num_eggs_3 and fertile_eggs_1 and fertile_eggs_2 and fertile_eggs_3:
-            fertelity_percentage = (
-                (int(fertile_eggs_1) + int(fertile_eggs_2) + int(fertile_eggs_3))
-                / (int(num_eggs_1) + int(num_eggs_2) + int(num_eggs_3))
-            ) * 100
+            stdev = np.std([ratio1, ratio2, ratio3], ddof=0)
+            rsd_single_weight = stdev / avg_single_weight
+        else:
+            rsd_single_weight = None
+
+
+        # Calculating N:
+        calc= 0.025 * float(total_eggs_weight)
+        if calc > 0:
+            added_eggs = calc
+        else:
+            added_eggs = None
+
+
+        # Calculating U:
+        if infertile_eggs_1 and infertile_eggs_2 and infertile_eggs_3 and fertile_eggs_1 and fertile_eggs_2 and fertile_eggs_3:
+            ratios1 = float(fertile_eggs_1) / (float(fertile_eggs_1) + float(infertile_eggs_1))
+            ratios2 = float(fertile_eggs_2) / (float(fertile_eggs_2) + float(infertile_eggs_2))
+            ratios3 = float(fertile_eggs_3) / (float(fertile_eggs_3) + float(infertile_eggs_3))
+            average_ratio = (ratios1 + ratios2 + ratios3) / 3
+            fertelity_percentage = average_ratio
         else:
             fertelity_percentage = None
 
-        rsd_fertelity_percentage = 0.0  # Assuming 0.0 for now; adjust if needed
+        # if num_eggs_1 and num_eggs_2 and num_eggs_3 and fertile_eggs_1 and fertile_eggs_2 and fertile_eggs_3:
+        #     fertelity_percentage = (
+        #         (int(fertile_eggs_1) + int(fertile_eggs_2) + int(fertile_eggs_3))
+        #         / (int(num_eggs_1) + int(num_eggs_2) + int(num_eggs_3))
+        #     ) * 100
+        # else:
+        #     fertelity_percentage = None
 
-        amount_of_added_eggs = 0.0  # Set this based on your logic
-        comments = "No comments"  # You can retrieve this from a form field if necessary
+        # Calculating V:
+        if infertile_eggs_1 and infertile_eggs_2 and infertile_eggs_3 and fertile_eggs_1 and fertile_eggs_2 and fertile_eggs_3:
+            stdv = np.std([ratios1, ratios2, ratios3], ddof=1)
+            rsd_fertelity_percentage = stdv / fertelity_percentage
+        else:
+            rsd_fertelity_percentage = None
+
+
+        # Calculating X:
+        if target_density and fertelity_percentage and avg_single_weight:
+            amount_of_added_eggs = float((target_density / fertelity_percentage) * avg_single_weight)
+        else:
+            amount_of_added_eggs = None
 
         # Save the data to the database
-        EggMonitor.objects.create(
+        egg = EggMonitor.objects.create(
             date_measure=date_measure,
             passed_hours=0.0,  # Set this based on your logic
             cage_code=cage_code,
@@ -104,7 +163,7 @@ def fill_eggs_monitor_form(request):
             avg_single_weight=avg_single_weight,
             rsd_single_weight=rsd_single_weight,
             total_eggs_weight=int(total_eggs_weight) if total_eggs_weight else None,
-            added_eggs=amount_of_added_eggs,
+            added_eggs=float(added_eggs) if added_eggs else None,
             fertile_eggs_1=int(fertile_eggs_1) if fertile_eggs_1 else None,
             fertile_eggs_2=int(fertile_eggs_2) if fertile_eggs_2 else None,
             fertile_eggs_3=int(fertile_eggs_3) if fertile_eggs_3 else None,
@@ -114,17 +173,20 @@ def fill_eggs_monitor_form(request):
             fertelity_percentage=fertelity_percentage,
             rsd_fertelity_percentage=rsd_fertelity_percentage,
             target_density=int(target_density) if target_density else None,
-            amount_of_added_eggs=amount_of_added_eggs,
+            amount_of_added_eggs=int(amount_of_added_eggs) if amount_of_added_eggs else None,
             incubation_temp=incubation_temp,
             incubation_tube=incubation_tube,
-            comments=comments
+            comments = request.POST.get('comments') or "No comments"
         )
 
-        # Redirect to a success page or return a success message
-        # return HttpResponse("Data inserted successfully")
+        print(egg)
+        if egg:
+            context = {
+                "msg": 'Record saved successfully!',
+            }
 
     # If GET request, just render the form
-    return render(request, "forms/eggsMonitorForm.html", {})
+    return render(request, "forms/eggsMonitorForm.html", context)
 
 def fill_rearing_monitor_form(request):
     if request.method == 'POST':
@@ -156,65 +218,85 @@ def fill_rearing_monitor_form(request):
         larvae_weight = request.POST.get('larvaeWeight') or None
         number_of_larvae_pupae_sampled = request.POST.get('numberOfLarvaePupaeSampled') or None
         cage_code = request.POST.get('cageCode') or None
+        comments = request.POST.get('comments') or "No comments"
+
 
         # Calculating additional fields only if necessary
+        # Calculating N
         if starter_date and length_measure_date:
             date_format = "%Y-%m-%dT%H:%M"  # Adjust format to match your date string format (e.g., "2023-08-23")
             date1 = datetime.strptime(starter_date, date_format)
             date2 = datetime.strptime(length_measure_date, date_format)
 
             delta = date2 - date1
-            starter_age = delta.days
+            total_days = delta.days
+            total_hours = delta.total_seconds() / 3600  # Convert total seconds to hours
+            days_with_hours = total_hours / 24
+            starter_age =days_with_hours
         else:
             starter_age = None
 
+
+        # Calculating V
         if total_larvae_weight and number_of_larvae_sampled:
             single_larva_weight = (float(total_larvae_weight) / float(number_of_larvae_sampled))
         else:
             single_larva_weight = None
 
-        if harvest_date and starter_date:
-            date_format = "%Y-%m-%dT%H:%M"  # Adjust format to match your date string format (e.g., "2023-08-23")
-            date1 = datetime.strptime(harvest_date, date_format)
-            date2 = datetime.strptime(starter_date, date_format)
 
-            delta = date2 - date1
-            days_from_laying = delta.days
+        # Calculating AA
+        if harvest_date and starter_date:
+            date_format = "%Y-%m-%dT%H:%M" # Adjust format to match your date string format (e.g., "2023-08-23")
+            dateA = datetime.strptime(harvest_date, date_format)
+            dateB = datetime.strptime(starter_date, date_format)
+
+            deltaa = dateA - dateB
+            total_daysA = deltaa.days
+            total_hoursA = deltaa.total_seconds() / 3600  # Convert total seconds to hours
+            days_with_hoursA = total_hoursA / 24
+            days_from_laying =days_with_hoursA
         else:
             days_from_laying = None
 
+        # Calculating AB
         if harvest_date and cooking_date:
             date_format = "%Y-%m-%dT%H:%M"  # Adjust format to match your date string format (e.g., "2023-08-23")
             date1 = datetime.strptime(harvest_date, date_format)
             date2 = datetime.strptime(cooking_date, date_format)
 
-            delta = date2 - date1
-            days_from_cooking = delta.days
+            delta = date1 - date2
+            total_days = delta.days
+            total_hours = delta.total_seconds() / 3600  # Convert total seconds to hours
+            days_with_hours = total_hours / 24
+            days_from_cooking =days_with_hours
         else:
             days_from_cooking = None
+
 
         if larvae_weight and number_of_larvae_pupae_sampled:
             single_larvae_pupae_weight = 1000 * (float(larvae_weight) / float(number_of_larvae_pupae_sampled))
         else:
             single_larvae_pupae_weight = None
         
+
+        # Calculating AG
         if total_pupae_weight and single_larvae_pupae_weight:
-            total_larvae_count = (float(larvae_weight) / (float(number_of_larvae_pupae_sampled) / 1000000 ))
+            total_larvae_count = (float(total_pupae_weight) / ((float(single_larvae_pupae_weight) / 1000000 )))
         else:
             total_larvae_count = None
 
+        # Calculating
         if total_larvae_count:
             survival_percentage = 100 * (float(total_larvae_count) / 8000)
         else:
             survival_percentage = None
         
 
-        comments = "No comments"  # You can retrieve this from a form field if necessary
 
 
         # Retrieve the EggMonitor instance
         try:
-            eggs_code_instance = EggMonitor.objects.get(eggs_code = int(eggs_code))
+            eggs_code_instance = EggMonitor.objects.get(eggs_code = eggs_code)
         except EggMonitor.DoesNotExist:
             eggs_code_instance = None  # Handle the case where the instance does not exist
             return HttpResponse("EggMonitor instance not found :(")
@@ -446,7 +528,6 @@ def get_rearing_monitor_table(request):
     return render(request, 'tables/rearingMonitorTable.html', {'data_from_server': data})
 
 def get_breeding_monitor_table(request):
-    console.log("#######################")
     all_breeding_monitors = BreedMonitor.objects.get_queryset()
     return render(request, "tables/breedingMonitorTable.html",{})
 
@@ -491,8 +572,72 @@ def get_breeding_monitor_table(request):
 
     # Render the data in the template
     return render(request, 'tables/breedingMonitorTable.html', {'data_from_server': data})
+
+def edit_egg_monitor(request, id):
+    egg_monitor = get_object_or_404(EggMonitor, eggs_code=id)
+    if request.method == 'POST':
+        form = EggMonitorForm(request.POST, instance=egg_monitor)
+        if form.is_valid():
+            form.save()
+            return redirect('get_egg_monitor_table')
+    else:
+        form = EggMonitorForm(instance=egg_monitor)
+    return render(request, 'edit_egg_monitor.html', {'form': form})
+
+def delete_egg_monitor(request, id):
+    egg_monitor = get_object_or_404(EggMonitor, eggs_code=id)
+    if request.method == 'POST':
+        egg_monitor.delete()
+        return redirect('get_egg_monitor_table')
+
+def egg_monitor_list(request):
+    data_from_server = EggMonitor.objects.all()
+    print('fffaf')
+    return render(request, 'tables/eggMonitorTable.html', {'data_from_server': data_from_server})
+
+
+def export_to_excel(request, model_name):
+    try:
+        # Dynamically get the model using the model name
+        model = apps.get_model('BFSapp', model_name)
+    except LookupError:
+        return HttpResponse("Model not found.", status=404)
+
+    # Query all records from the model
+    records = model.objects.all().values()
+
+    # Convert records to a list of dictionaries
+    records_list = list(records)
+
+    # Convert any timezone-aware datetimes to naive datetimes
+    for record in records_list:
+        for field, value in record.items():
+            if isinstance(value, datetime) and is_aware(value):
+                record[field] = value.astimezone(None).replace(tzinfo=None)
+
+    # Convert list of dictionaries to a DataFrame
+    df = pd.DataFrame(records_list)
+
+    # Create an HTTP response with Excel file
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f'attachment; filename={model_name}_data.xlsx'
+
+    # Write DataFrame to Excel
+    with pd.ExcelWriter(response, engine='openpyxl') as writer:
+        df.to_excel(writer, sheet_name=model_name, index=False)
+
+    return response
+
+
 # Load the trained model
-model = joblib.load('random_forest_model.pkl')  # Ensure the path to the model file is correct
+#model = joblib.load('BFSapp/random_forest_model.pkl')  # Ensure the path to the model file is correct
+model_path = os.path.join(settings.BASE_DIR, 'BFSapp', 'random_forest_model.pkl')
+# Ensure the file exists before trying to load
+if not os.path.exists(model_path):
+    raise FileNotFoundError(f"Model file not found at {model_path}. Please ensure the file is in the correct location.")
+
+# Load the trained model using joblib
+model = joblib.load(model_path)
 
 
 def predict_view(request):

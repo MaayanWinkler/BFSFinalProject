@@ -23,7 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", views.user_login, name="user_login"),
     path("index", views.index, name="index"),
-    path("check_user/", views.check_user, name="check_user"),
     path("forms/eggsMonitorForm", views.fill_eggs_monitor_form, name="fill_eggs_monitor_form"),
     path("forms/rearingMonitorForm", views.fill_rearing_monitor_form, name="fill_rearing_monitor_form"),
     path("forms/breedingMonitorForm", views.fill_breeding_monitor_form, name="fill_breeding_monitor_form"),
@@ -31,4 +30,7 @@ urlpatterns = [
     path("tables/rearingMonitorTable", views.get_rearing_monitor_table, name="get_rearing_monitor_table"),
     path("tables/breedingMonitorTable", views.get_breeding_monitor_table, name="get_breeding_monitor_table"),
     path("predict/", views.predict_view, name="predict"),
+    path('eggMonitorTable/edit/<str:id>/', views.edit_egg_monitor, name='edit_record'),
+    path('eggMonitorTable/delete/<str:id>/', views.delete_egg_monitor, name='delete_record'),
+    path('export/<str:model_name>/', views.export_to_excel, name='export_to_excel'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,17 @@
+<!-- templates/edit_egg_monitor.html -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Edit Egg Monitor</title>
+    <!-- Include your CSS files here -->
+  </head>
+  <body>
+    <h1>Edit Egg Monitor Record</h1>
+    <form method="post">
+      {% csrf_token %} {{ form.as_p }}
+      <button type="submit">Save Changes</button>
+      <a href="{% url 'get_egg_monitor_table' %}">Cancel</a>
+    </form>
+  </body>
+</html>
