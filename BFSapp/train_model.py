@@ -10,7 +10,7 @@ import joblib
 train_data = pd.read_csv('forecasting_data_training.csv', header=0)
 
 # Define features and target variable
-features = ['Temperature', 'Humidity', 'Larvae_weight', 'Num_of_pupae', 'Substratebefordrying', 'Substrateafterdrying']
+features = ['Sample','Temperature', 'Humidity', 'Larvae_weight', 'Num_of_pupae', 'Substratebefordrying', 'Substrateafterdrying']
 target = 'Pupation_Percentage_for_Day_14'
 
 # Convert all data to numeric and handle errors

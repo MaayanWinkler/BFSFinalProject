@@ -644,24 +644,32 @@ def predict_view(request):
     if request.method == 'POST':
         form = PredictionForm(request.POST)
         if form.is_valid():
-            # Get form data
+            # Extract form data
             temperature = form.cleaned_data['temperature']
             humidity = form.cleaned_data['humidity']
             larvae_weight = form.cleaned_data['larvae_weight']
             num_of_pupae = form.cleaned_data['num_of_pupae']
             substrate_before_drying = form.cleaned_data['substrate_before_drying']
             substrate_after_drying = form.cleaned_data['substrate_after_drying']
+            sample_day = form.cleaned_data['sample_day']
 
             # Prepare data for prediction
             input_data = np.array(
-                [[temperature, humidity, larvae_weight, num_of_pupae, substrate_before_drying, substrate_after_drying]])
+                [[temperature, humidity, larvae_weight, num_of_pupae, substrate_before_drying, substrate_after_drying, sample_day]]
+            )
 
             # Make prediction using the loaded model
             prediction = model.predict(input_data)[0]
 
-            # Return the prediction result
-            return render(request, 'predictions/result.html', {'prediction': prediction})
+            # Construct the message
+            message = f"Based on the provided details, the expected pupation percentage for day 14 of this cycle is {prediction:.2f}%."
+
+            # Return the form with the message
+            return render(request, 'forms/predictionForm.html', {'form': form, 'message': message})
+        else:
+            # Return form with errors
+            return render(request, 'forms/predictionForm.html', {'form': form})
     else:
         form = PredictionForm()
 
-    return render(request, 'predictions/predict.html', {'form': form})
+    return render(request, 'forms/predictionForm.html', {'form': form})
