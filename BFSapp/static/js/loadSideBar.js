@@ -95,9 +95,9 @@ const loadSidebar = function () {
                 </div>
               </li>
               <li class="nav-item">
-                <a href="widgets.html">
-                  <i class="fas fa-desktop"></i>
-                  <p>Forcasting</p>
+                <a href="/forms/rearingMonitorForm">
+                  <i class="caret"></i>
+                  <p>Predication</p>
                   <span class="badge badge-success">4</span>
                 </a>
               </li>
