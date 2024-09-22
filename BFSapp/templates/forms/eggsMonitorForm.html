@@ -1,322 +1,250 @@
 {% extends 'base.html' %}
 {% load static %}
 
-  <head>
+<head>
     <meta charset="UTF-8" />
-    {% load static %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Eggs Monitoring Form</title>
-  </head>
-  <body>
+</head>
+
+<body>
     {% block content %}
     <div class="main-panel">
-      <div class="page-inner">
-        <div class="row">
-          <div class="col-md-12">
-            <div class="card">
-              <form method="post" action="{% url 'fill_eggs_monitor_form' %}">
-                <!-- <div class="card-header"></div> -->
-                <div class="card-title">Eggs Monitoring (*)</div>
-                <div class="card-body"></div>
-                <div class="form-group">
-                  <label for="dateTime">Collection Date and Time (*)</label>
-                  <input
-                    type="datetime-local"
-                    id="dateTime"
-                    name="dateTime"
-                    format-value="yyyy-MM-ddTHH:mm"
-                    required
-                  />
-                  <span class="error-message" id="date-error"></span>
+        <div class="page-inner">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <form method="post" action="{% url 'fill_eggs_monitor_form' %}" id="eggs-form">
+                            <div class="card-title">Eggs Monitoring (*)</div>
+                            <div class="card-body"></div>
+                            
+                            <div class="form-group">
+                                <label for="dateTime">Collection Date and Time (*)</label>
+                                <input type="datetime-local" id="dateTime" name="dateTime" required />
+                                <span class="error-message" id="date-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cageCode">Cage Code (*)</label>
+                                <input type="text" id="cageCode" name="cageCode" required />
+                                <span class="error-message" id="cage-code-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="eggsCode">Eggs Code (*)</label>
+                                <input type="text" id="eggsCode" name="eggsCode" required />
+                                <span class="error-message" id="eggs-code-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="weightEgg1">Weight for Single Egg 1 (g)</label>
+                                <input type="text" id="weightEgg1" name="weightEgg1" />
+                                <span class="error-message" id="weight1-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="weightEgg2">Weight for Single Egg 2 (g)</label>
+                                <input type="text" id="weightEgg2" name="weightEgg2" />
+                                <span class="error-message" id="weight2-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="weightEgg3">Weight for Single Egg 3 (g)</label>
+                                <input type="text" id="weightEgg3" name="weightEgg3" />
+                                <span class="error-message" id="weight3-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="numberEggs1"># of Eggs 1</label>
+                                <input type="text" id="numberEggs1" name="numberEggs1" />
+                                <span class="error-message" id="number-eggs1-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="numberEggs2"># of Eggs 2</label>
+                                <input type="text" id="numberEggs2" name="numberEggs2" />
+                                <span class="error-message" id="number-eggs2-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="numberEggs3"># of Eggs 3</label>
+                                <input type="text" id="numberEggs3" name="numberEggs3" />
+                                <span class="error-message" id="number-eggs3-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="total_eggs_weight">Total Eggs Weight (mg)</label>
+                                <input type="text" id="total_eggs_weight" name="total_eggs_weight" />
+                                <span class="error-message" id="total-eggs-weight-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="numberFertileEggs1"># Fertile Eggs 1</label>
+                                <input type="text" id="numberFertileEggs1" name="numberFertileEggs1" />
+                                <span class="error-message" id="number-fertile1-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="numberFertileEggs2"># Fertile Eggs 2</label>
+                                <input type="text" id="numberFertileEggs2" name="numberFertileEggs2" />
+                                <span class="error-message" id="number-fertile2-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="numberFertileEggs3"># Fertile Eggs 3</label>
+                                <input type="text" id="numberFertileEggs3" name="numberFertileEggs3" />
+                                <span class="error-message" id="number-fertile3-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="numberInfertileEggs1"># Infertile Eggs 1</label>
+                                <input type="text" id="numberInfertileEggs1" name="numberInfertileEggs1" />
+                                <span class="error-message" id="number-infertile1-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="numberInfertileEggs2"># Infertile Eggs 2</label>
+                                <input type="text" id="numberInfertileEggs2" name="numberInfertileEggs2" />
+                                <span class="error-message" id="number-infertile2-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="numberInfertileEggs3"># Infertile Eggs 3</label>
+                                <input type="text" id="numberInfertileEggs3" name="numberInfertileEggs3" />
+                                <span class="error-message" id="number-infertile3-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="targetDensity">Target Density</label>
+                                <input type="text" id="targetDensity" name="targetDensity" />
+                                <span class="error-message" id="target-density-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="incubationTemp">Incubation Temp (°C)</label>
+                                <input type="text" id="incubationTemp" name="incubationTemp" />
+                                <span class="error-message" id="incubation-temp-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="incubationTube">Incubation Tube</label>
+                                <input type="text" id="incubationTube" name="incubationTube" />
+                                <span class="error-message" id="incubation-tube-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="comments">Comments</label>
+                                <input type="text" id="comments" name="comments" />
+                                <span class="error-message" id="comments-error"></span>
+                            </div>
+
+                            <div class="card-action">
+                                <div class="success-message" id="success-message"></div>
+                                {% csrf_token %}
+                                {% if msg %}
+                                <a class="msg">{{ msg }}</a>
+                                <p></p>
+                                {% endif %}
+                                <input id="submit" type="submit" value="Submit" />
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="form-group">
-                  <label for="cageCode">Cage Code (*)</label>
-                  <input type="text" id="cageCode" name="cageCode" required />
-                  <span class="error-message" id="cage-code-error"></span>
-                </div>
-                <div class="form-group">
-                  <label for="eggsCode">Eggs Code (*)</label>
-                  <input type="text" id="eggsCode" name="eggsCode" required />
-                  <span class="error-message" id="eggs-code-error"></span>
-                </div>
-                <div class="form-group">
-                  <label for="weightEgg1">Weight for Single Egg 1</label>
-                  <input type="text" id="weightEgg1" name="weightEgg1" />
-                  <span class="error-message" id="weight1-error"></span>
-                </div>
-                <div class="form-group">
-                  <label for="weightEgg1">Weight for Single Egg 2</label>
-                  <input type="text" id="weightEgg2" name="weightEgg2" />
-                  <span class="error-message" id="weight2-error"></span>
-                </div>
-                <div class="form-group">
-                  <label for="weightEgg1">Weight for Single Egg 3</label>
-                  <input type="text" id="weightEgg3" name="weightEgg3" />
-                  <span class="error-message" id="weight3-error"></span>
-                </div>
-                <div class="form-group">
-                  <label for="numberEggs1"># of Eggs 1</label>
-                  <input type="text" id="numberEggs1" name="numberEggs1" />
-                  <span class="error-message" id="number-eggs1-error"></span>
-                </div>
-                <div class="form-group">
-                  <label for="numberEggs2"># of Eggs 2</label>
-                  <input type="text" id="numberEggs2" name="numberEggs2" />
-                  <span class="error-message" id="number-eggs2-error"></span>
-                </div>
-                <div class="form-group">
-                  <label for="numberEggs3"># of Eggs 3</label>
-                  <input type="text" id="numberEggs3" name="numberEggs3" />
-                  <span class="error-message" id="number-eggs3-error"></span>
-                </div>
-                <div class="form-group">
-                  <label for="total_eggs_weight">Total Eggs Weight (mg)</label>
-                  <input
-                    type="text"
-                    id="total_eggs_weight"
-                    name="total_eggs_weight"
-                  />
-                  <span
-                    class="error-message"
-                    id="total-eggs-weight-error"
-                  ></span>
-                </div>
-                <div class="form-group">
-                  <label for="numberFertileEggs1"># Fertile Eggs 1</label>
-                  <input
-                    type="text"
-                    id="numberFertileEggs1"
-                    name="numberFertileEggs1"
-                  />
-                  <span class="error-message" id="number-fertile1-error"></span>
-                </div>
-                <div class="form-group">
-                  <label for="numberFertileEggs2"># Fertile Eggs 2</label>
-                  <input
-                    type="text"
-                    id="numberFertileEggs2"
-                    name="numberFertileEggs2"
-                  />
-                  <span class="error-message" id="number-fertile2-error"></span>
-                </div>
-                <div class="form-group">
-                  <label for="numberFertileEggs3"># Fertile Eggs 3</label>
-                  <input
-                    type="text"
-                    id="numberFertileEggs3"
-                    name="numberFertileEggs3"
-                  />
-                  <span class="error-message" id="number-fertile3-error"></span>
-                </div>
-                <div class="form-group">
-                  <label for="numberInfertileEggs1"># Infertile Eggs 1</label>
-                  <input
-                    type="text"
-                    id="numberInfertileEggs1"
-                    name="numberInfertileEggs1"
-                  />
-                  <span
-                    class="error-message"
-                    id="number-infertile1-error"
-                  ></span>
-                </div>
-                <div class="form-group">
-                  <label for="numberInfertileEggs2"># Infertile Eggs 2</label>
-                  <input
-                    type="text"
-                    id="numberInfertileEggs2"
-                    name="numberInfertileEggs2"
-                  />
-                  <span
-                    class="error-message"
-                    id="number-infertile2-error"
-                  ></span>
-                </div>
-                <div class="form-group">
-                  <label for="numberInfertileEggs3"># Infertile Eggs 3</label>
-                  <input
-                    type="text"
-                    id="numberInfertileEggs3"
-                    name="numberInfertileEggs3"
-                  />
-                  <span
-                    class="error-message"
-                    id="number-infertile3-error"
-                  ></span>
-                </div>
-                <div class="form-group">
-                  <label for="targetDensity">Target Density</label>
-                  <input type="text" id="targetDensity" name="targetDensity" />
-                  <span class="error-message" id="target-density-error"></span>
-                </div>
-                <div class="form-group">
-                  <label for="incubationTemp">Incubation Temp</label>
-                  <input
-                    type="text"
-                    id="incubationTemp"
-                    name="incubationTemp"
-                  />
-                  <span class="error-message" id="incubation-temp-error"></span>
-                </div>
-                <div class="form-group">
-                  <label for="incubationTube">Incubation Tube</label>
-                  <input
-                    type="text"
-                    id="incubationTube"
-                    name="incubationTube"
-                  />
-                  <span class="error-message" id="incubation-tube-error"></span>
-                </div>
-                <div class="form-group">
-                  <label for="comments">Comments</label>
-                  <input
-                    type="text"
-                    id="comments"
-                    name="comments"
-                  />
-                  <span class="error-message" id="comments-error"></span>
-               </div>
-                <div class="card-action">
-                  <div class="success-message" id="success-message"></div>
-                  {% csrf_token %}
-                  {% if msg %}
-                    <a class="msg">{{ msg }}</a>
-                    <p></p>
-                  {% endif %}
-                <input id="submit" type="submit" value="Submit" />
-                </div>
-              </form>
             </div>
-          </div>
         </div>
-      </div>
     </div>
     {% endblock %}
-  </body>
+</body>
 
-  {% block extra_css %}
-  <!-- CSS Files -->
-  <link rel="stylesheet" href="{%  static 'styles/form.css' %}" />
-  <link rel="stylesheet" href="{%  static 'css/bootstrap.min.css' %}" />
-  <link rel="stylesheet" href="{%  static '/css/kaiadmin.min.css' %}" />
-  <style>
+{% block extra_css %}
+<!-- CSS Files -->
+<link rel="stylesheet" href="{% static 'styles/form.css' %}" />
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+<link rel="stylesheet" href="{% static 'css/kaiadmin.min.css' %}" />
+<style>
     .error-message {
-      color: red;
+        color: red;
     }
 
     .success-message {
-      color: green;
-      font-weight: bold;
+        color: green;
+        font-weight: bold;
     }
-  </style>
-  {% endblock %}
+</style>
+{% endblock %}
 
-  {% block extra_js %}
-  <script>
+{% block extra_js %}
+<script>
     document.getElementById("submit").addEventListener("click", validateForm);
 
-    function validateForm() {
-      const dateTimeInput = document.getElementById("dateTime");
-      const cageCodeInput = document.getElementById("cageCode");
-      const eggsCodeInput = document.getElementById("eggsCode");
+    function validateForm(event) {
+        event.preventDefault();
 
-      const weightEgg1Input = document.getElementById("weightEgg1");
-      const weightEgg2Input = document.getElementById("weightEgg2");
-      const weightEgg3Input = document.getElementById("weightEgg3");
-
-      const numberEggs1Input = document.getElementById("numberEggs1");
-      const numberEggs2Input = document.getElementById("numberEggs2");
-      const numberEggs3Input = document.getElementById("numberEggs3");
-
-      const totalEggsWeightInput = document.getElementById("total_eggs_weight");
-
-      const numberFertile1Input = document.getElementById("numberFertileEggs1");
-      const numberFertile2Input = document.getElementById("numberFertileEggs2");
-      const numberFertile3Input = document.getElementById("numberFertileEggs3");
-
-      const numberInfertile1Input = document.getElementById(
-        "numberInfertileEggs1"
-      );
-      const numberInfertile2Input = document.getElementById(
-        "numberInfertileEggs2"
-      );
-      const numberInfertile3Input = document.getElementById(
-        "numberInfertileEggs3"
-      );
-
-      const targetDensityInput = document.getElementById("targetDensity");
-
-      // Validation functions
-      function validateInputReceived(input, errorId) {
-        const dateTimeValue = input.value;
-        if (!dateTimeValue) {
-          document.getElementById(errorId).textContent =
-            "This is a mandatory field!";
-          return false;
+        // Reset error messages
+        const errorElements = document.querySelectorAll(".error-message");
+        for (let i = 0; i < errorElements.length; i++) {
+            errorElements[i].textContent = "";
         }
-        return true;
-      }
 
-      function validateFloat(input, errorId) {
-        const value = input.value;
-        if (value && !/^\d+(\.\d+)?$/.test(value)) {
-          document.getElementById(errorId).textContent =
-            "Please enter only float numbers";
-          return false;
+        // Fields to validate
+        const fieldsToValidate = [
+            { id: "dateTime", required: true, type: "text", errorId: "date-error", message: "Date is required" },
+			{ id: "cageCode", required: true, type: "text", errorId: "cage-code-error", message: "Cage Code is required" },
+            { id: "eggsCode", required: true, type: "text", errorId: "eggs-code-error", message: "Eggs Code is required" },
+            { id: "weightEgg1", required: false, type: "float", errorId: "weight1-error", message: "Please enter a valid float value for Weight Egg 1" },
+            { id: "weightEgg2", required: false, type: "float", errorId: "weight2-error", message: "Please enter a valid float value for Weight Egg 2" },
+            { id: "weightEgg3", required: false, type: "float", errorId: "weight3-error", message: "Please enter a valid float value for Weight Egg 3" },
+            { id: "numberEggs1", required: false, type: "integer", errorId: "number-eggs1-error", message: "Please enter a valid integer for # of Eggs 1" },
+            { id: "numberEggs2", required: false, type: "integer", errorId: "number-eggs2-error", message: "Please enter a valid integer for # of Eggs 2" },
+            { id: "numberEggs3", required: false, type: "integer", errorId: "number-eggs3-error", message: "Please enter a valid integer for # of Eggs 3" },
+            { id: "total_eggs_weight", required: false, type: "float", errorId: "total-eggs-weight-error", message: "Please enter a valid float value for Total Eggs Weight" },
+            { id: "numberFertileEggs1", required: false, type: "integer", errorId: "number-fertile1-error", message: "Please enter a valid integer for # Fertile Eggs 1" },
+            { id: "numberFertileEggs2", required: false, type: "integer", errorId: "number-fertile2-error", message: "Please enter a valid integer for # Fertile Eggs 2" },
+            { id: "numberFertileEggs3", required: false, type: "integer", errorId: "number-fertile3-error", message: "Please enter a valid integer for # Fertile Eggs 3" },
+            { id: "numberInfertileEggs1", required: false, type: "integer", errorId: "number-infertile1-error", message: "Please enter a valid integer for # Infertile Eggs 1" },
+            { id: "numberInfertileEggs2", required: false, type: "integer", errorId: "number-infertile2-error", message: "Please enter a valid integer for # Infertile Eggs 2" },
+            { id: "numberInfertileEggs3", required: false, type: "integer", errorId: "number-infertile3-error", message: "Please enter a valid integer for # Infertile Eggs 3" },
+            { id: "targetDensity", required: false, type: "float", errorId: "target-density-error", message: "Please enter a valid float value for Target Density" },
+            { id: "incubationTemp", required: false, type: "float", errorId: "incubation-temp-error", message: "Please enter a valid float value for Incubation Temp" },
+            { id: "incubationTube", required: false, type: "text", errorId: "incubation-tube-error", message: "Please enter a valid text for Incubation Tube" }
+        ];
+
+        let isValid = true;
+
+        fieldsToValidate.forEach(field => {
+            const input = document.getElementById(field.id);
+            const value = input.value;
+            const errorElement = document.getElementById(field.errorId);
+
+            if (field.required && !value) {
+                errorElement.textContent = field.message;
+                isValid = false;
+            } else if (field.type === "float" && value && !/^\d+(\.\d+)?$/.test(value)) {
+                errorElement.textContent = field.message;
+                isValid = false;
+            } else if (field.type === "integer" && value && !/^\d+$/.test(value)) {
+                errorElement.textContent = field.message;
+                isValid = false;
+            } else {
+                errorElement.textContent = "";
+            }
+        });
+
+        if (isValid) {
+            document.getElementById("success-message").textContent = "Data inserted successfully!";
+            document.getElementById("eggs-form").submit();
+        } else {
+            document.getElementById("success-message").textContent = "";
         }
-        return true;
-      }
-
-      function validateInteger(input, errorId) {
-        const value = input.value;
-        if (value && /^\d+(\.\d+)?$/.test(value)) {
-          document.getElementById(errorId).textContent =
-            "Please enter only integer numbers";
-          return false;
-        }
-        return true;
-      }
-
-      const errorElements = document.querySelectorAll(".error-message");
-      for (const i = 0; i < errorElements.length; i++) {
-        errorElements[i].textContent = "";
-      }
-
-      if (
-        validateInputReceived(dateTimeInput, "date-error") &&
-        validateInputReceived(cageCodeInput, "cage-code-error") &&
-        validateInputReceived(eggsCodeInput, "eggs-code-error") &&
-        validateFloat(weightEgg1Input, "weight1-error") &&
-        validateFloat(weightEgg2Input, "weight2-error") &&
-        validateFloat(weightEgg3Input, "weight3-error") &&
-        validateInteger(numberEggs1Input, "number-eggs1-error") &&
-        validateInteger(numberEggs2Input, "number-eggs2-error") &&
-        validateInteger(numberEggs3Input, "number-eggs3-error") &&
-        validateInteger(totalEggsWeightInput, "total-eggs-weight-error") &&
-        validateInteger(numberFertile1Input, "number-fertile1-error") &&
-        validateInteger(numberFertile2Input, "number-fertile2-error") &&
-        validateInteger(numberFertile3Input, "number-fertile3-error") &&
-        validateInteger(numberInfertile1Input, "number-infertile1-error") &&
-        validateInteger(numberInfertile2Input, "number-infertile2-error") &&
-        validateInteger(numberInfertile3Input, "number-infertile3-error") &&
-        validateInteger(targetDensityInput, "target-density-error")
-      ) {
-        document.getElementById("success-message").textContent =
-          "Data inserted successfully";
-
-        // Hide the success message after 3 seconds
-        setTimeout(function () {
-          document.getElementById("success-message").textContent = "";
-        }, 900000);
-
-        return true;
-      } else {
-        // Clear success message if there are errors
-        document.getElementById("success-message").textContent = "";
-        return false;
-      }
     }
-  </script>
-    {% endblock %}
 
-</html>
+    // Real-time validation for user input
+    document.querySelectorAll("input").forEach(input => {
+        input.addEventListener("input", function() {
+            const errorElement = document.getElementById(`${input.id}-error`);
+            errorElement.textContent = ""; // Clear the error message when user starts typing
+        });
+    });
+</script>
+{% endblock %}
+
